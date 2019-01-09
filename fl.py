@@ -113,14 +113,14 @@ class Fl(object):
 
 
         # 1
-        # driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
-        # username = self.input_key(driver, 'searchString', key)
-        # username.submit()
-        # time.sleep(4)
-        # try:
-        #     first = driver.find_element_by_css_selector('table.searchDocTable').text
-        # except NoSuchElementException:
-        #     first = 'Ничего не найдено.'
+        driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
+        username = self.input_key(driver, 'searchString', key)
+        username.submit()
+        time.sleep(4)
+        try:
+            first = driver.find_element_by_css_selector('table.searchDocTable').text
+        except NoSuchElementException:
+            first = 'Ничего не найдено.'
 
         # 2
         driver.get('https://service.nalog.ru/bi.do')
@@ -177,7 +177,7 @@ class Fl(object):
 
 
         self.info = (
-                    # (http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html : ', first),
+                    ('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html : ', first),
                     ('https://service.nalog.ru/bi.do', second),
                     ('https://service.nalog.ru/disqualified.do', third),
                     ('http://bankrot.fedresurs.ru/DebtorsSearch.aspx', fourth),
@@ -185,5 +185,6 @@ class Fl(object):
                     ('https://service.nalog.ru/uwsfind.do', sixth if sixth else 'ошибка ввода'),
                     ('https://service.nalog.ru/disqualified.do', seventh)
             )
-        print(input('close?: ', ))
+        # print(input('close?: ', ))
         driver.close()
+        return name

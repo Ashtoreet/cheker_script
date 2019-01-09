@@ -130,14 +130,14 @@ class Ul(object):
         self.cap_loop(username, driver, 'captcha', 'float-right')
         third = self.get_text(driver, 'resultPanel')
 
-        # driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
-        # username = self.input_key(driver, 'searchString', key)
-        # username.submit()
-        # time.sleep(3)
-        # try:
-        #     fourth = driver.find_element_by_css_selector('table.searchDocTable').text
-        # except NoSuchElementException:
-        #     fourth = 'Ничего не найдено.'
+        driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
+        username = self.input_key(driver, 'searchString', key)
+        username.submit()
+        time.sleep(3)
+        try:
+            fourth = driver.find_element_by_css_selector('table.searchDocTable').text
+        except NoSuchElementException:
+            fourth = 'Ничего не найдено.'
 
         driver.get('https://service.nalog.ru/svl.do')
         username = self.input_key(driver, 'svlform_inn', key)
@@ -166,11 +166,11 @@ class Ul(object):
                 ('https://fedresurs.ru', fedresurs),
                 ('https://service.nalog.ru/uwsfind.do', second),
                 ('https://service.nalog.ru/disqualified.do', third),
-                # ('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html', fourth),
+                ('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html', fourth),
                 ('https://service.nalog.ru/svl.do', fifth),
                 ('http://bankrot.fedresurs.ru/DebtorsSearch.aspx', sixth),
                 ('https://service.nalog.ru/zd.do', seventh),
                 ('https://service.nalog.ru/bi.do', eighth)
                 )
-        print(input('close?: ', ))
+        # print(input('close?: ', ))
         driver.close()

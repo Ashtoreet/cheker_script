@@ -19,6 +19,7 @@ def add_infotable(info):
         else:
             row_cells[1].text = 'Пусто'
 
+
 # data acquisition
 def user_input():
     var = False
@@ -32,6 +33,7 @@ def user_input():
                 return False
             print('Неверные данные.')
             var = False
+
 
 def loop_keys():
     keys = {}
@@ -47,6 +49,8 @@ def loop_keys():
 # end data acquisition
 # loop_keys() - словарь с данными от пользователя
 
+
+print('Вводите ключи по одному.')
 keys = loop_keys()
 
 innul = keys.get('innul')
@@ -58,13 +62,14 @@ tu_ul = (innul, ogrn)
 tu_fl = (innfl, ogrnip)
 
 today = datetime.date.today().strftime('%d.%m.%yг')
+
 document = Document()
 
 if tu_fl != (None, None) and tu_ul != (None, None):
     print('Check Fl')
     fl = Fl(tu_fl)
     # fl.check_using_service()
-    fl.services()
+    name = fl.services()
     print(fl.info)
 
     print('Check Ul')
@@ -73,20 +78,30 @@ if tu_fl != (None, None) and tu_ul != (None, None):
     ul.services()
     print(ul.info)
 
-    document.add_heading('ИНН {} | ОГРНИП {}'.format(fl.innfl, fl.ogrnip), level=1)
+    document.add_heading('ИНН: {}'.format(fl.innfl), level=1)
+    document.add_heading('ОГРНИП: {}'.format(fl.ogrnip), level=1)
+    document.add_heading('{}'.format(name), level=2)
     add_infotable(fl.info)
-    document.add_heading('ИНН {} | ОГРН {}'.format(ul.innul, ul.ogrn), level=1)
+    document.add_heading('ИНН: {}'.format(ul.innul), level=1)
+    document.add_heading('ОГРН: {}'.format(ul.ogrn), level=1)
     add_infotable(ul.info)
+
+    filename = '{} - {}, {}.docx'.format(today, fl.innfl, ul.innul)
 
 elif tu_fl != (None, None):
     print('Check only Fl')
     fl = Fl(tu_fl)
     # fl.check_using_service()
-    fl.services()
+    name = fl.services()
     print(fl.info)
 
-    document.add_heading('ИНН {} | ОГРНИП {}'.format(fl.innfl, fl.ogrnip), level=1)
+    document.add_heading('ИНН: {}'.format(fl.innfl), level=1)
+    document.add_heading('ОГРНИП: {}'.format(fl.ogrnip), level=1)
+    document.add_heading('{}'.format(name), level=2)
+
     add_infotable(fl.info)
+
+    filename = '{} - {}.docx'.format(today, fl.innfl)
 
 elif tu_ul != (None, None):
     print('Check only Ul')
@@ -95,8 +110,11 @@ elif tu_ul != (None, None):
     ul.services()
     print(ul.info)
 
-    document.add_heading('ИНН {} | ОГРН {}'.format(ul.innul, ul.ogrn), level=1)
+    document.add_heading('ИНН: {}'.format(ul.innul), level=1)
+    document.add_heading('ОГРН: {}'.format(ul.ogrn), level=1)
     add_infotable(ul.info)
+
+    filename = '{} - {}.docx'.format(today, ul.innul)
 
 else:
     print('Nothing to check.')
@@ -104,4 +122,4 @@ else:
 
 document.add_page_break()
 
-document.save('{}.docx'.format(today))
+document.save(filename)
