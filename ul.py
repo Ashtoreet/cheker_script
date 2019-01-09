@@ -86,7 +86,7 @@ class Ul(object):
             captcha.send_keys(i)
         return True
 
-    def cap_loop(self, username, driver, id, btn_id=None):
+    def cap_loop(self, username, driver, btn_id=None):
         er = True
         while er:
             self.cap(driver)
@@ -95,7 +95,7 @@ class Ul(object):
             else:
                 username.submit()
             try:
-                er = driver.find_element_by_id(id).text
+                er = driver.find_element_by_id('errors_captcha').text
                 print(er)
             except NoSuchElementException:
                 er = False
@@ -119,14 +119,14 @@ class Ul(object):
         if self.ogrn:
             driver.get('https://service.nalog.ru/uwsfind.do')
             username = self.input_key(driver, 'ogrnUl', ogrn)
-            self.cap_loop(username, driver, 'errors_captcha', 'btnSearch')
+            self.cap_loop(username, driver, 'btnSearch')
             second = self.get_text(driver, 'pnlResults')
         else:
             second = 'Не проверяли'
 
         driver.get('https://service.nalog.ru/disqualified.do')
         username = self.input_key(driver, 'orgInn', key)
-        self.cap_loop(username, driver, 'errors_captcha', 'float-right')
+        self.cap_loop(username, driver, 'float-right')
         third = self.get_text(driver, 'resultPanel')
 
         driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
@@ -154,14 +154,14 @@ class Ul(object):
         driver.get('https://service.nalog.ru/zd.do')
         username = self.input_key(driver, 'inn', key)
         captcha = driver.find_element_by_id('captcha')
-        self.cap_loop(username, driver, 'errors_captcha', 'btn_send')
+        self.cap_loop(username, driver, 'btn_send')
         seventh = self.get_text(driver, 'pnlResults')
 
         driver.get('https://service.nalog.ru/bi.do')
         self.radio_click(driver, 'unirad_0')
         username = self.input_key(driver, 'innPRS', key)
         self.bik(driver, 'bikPRS')
-        self.cap_loop(username, driver, 'errors_captcha', 'btnSearch')
+        self.cap_loop(username, driver, 'btnSearch')
         eighth = self.get_text(driver, 'pnlResultData')
 
         self.info = (
