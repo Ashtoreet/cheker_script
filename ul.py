@@ -39,14 +39,6 @@ class Ul(object):
     #     driver.close()
 
 
-    def cap(self, driver):
-        captcha = driver.find_element_by_id('captcha')
-        f = [x for x in input('введите капчу: ')]
-        for i in f:
-            time.sleep(.05)
-            captcha.send_keys(i)
-        return True
-
     def bik(self, driver, id_name):
         bikn = driver.find_element_by_id(id_name)
         bik = [x for x in '000000000']
@@ -86,6 +78,14 @@ class Ul(object):
             rows = driver.find_elements_by_id(id)
             text = [row.text for row in rows]
 
+    def cap(self, driver):
+        captcha = driver.find_element_by_id('captcha')
+        f = [x for x in input('введите капчу: ')]
+        for i in f:
+            time.sleep(.05)
+            captcha.send_keys(i)
+        return True
+
     def cap_loop(self, username, driver, id, btn_id=None):
         er = True
         while er:
@@ -106,7 +106,8 @@ class Ul(object):
     def services(self):
 
         key = [x for x in self.innul]
-        ogrn = [x for x in self.ogrn]
+        if self.ogrn:
+            ogrn = [x for x in self.ogrn]
         # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
         driver = webdriver.Chrome()
 
@@ -117,17 +118,18 @@ class Ul(object):
             username.send_keys(i)
         driver.find_element_by_class_name("btn").click()
         fedresurs = self.get_text(driver, 'search-result')
-        # ctl00_MainContent_upnCompanyList
-# ctl00_MainContent_tdContent
 
-        driver.get('https://service.nalog.ru/uwsfind.do')
-        username = self.input_key(driver, 'ogrnUl', ogrn)
-        self.cap_loop(username, driver, 'captcha', 'btnSearch')
-        second = self.get_text(driver, 'pnlResults')
+        if self.ogrn:
+            driver.get('https://service.nalog.ru/uwsfind.do')
+            username = self.input_key(driver, 'ogrnUl', ogrn)
+            self.cap_loop(username, driver, 'errors_captcha', 'btnSearch')
+            second = self.get_text(driver, 'pnlResults')
+        else:
+            second = 'Не проверяли'
 
         driver.get('https://service.nalog.ru/disqualified.do')
         username = self.input_key(driver, 'orgInn', key)
-        self.cap_loop(username, driver, 'captcha', 'float-right')
+        self.cap_loop(username, driver, 'errors_captcha', 'float-right')
         third = self.get_text(driver, 'resultPanel')
 
         driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
@@ -152,14 +154,14 @@ class Ul(object):
         driver.get('https://service.nalog.ru/zd.do')
         username = self.input_key(driver, 'inn', key)
         captcha = driver.find_element_by_id('captcha')
-        self.cap_loop(username, driver, 'captcha', 'btn_send')
+        self.cap_loop(username, driver, 'errors_captcha', 'btn_send')
         seventh = self.get_text(driver, 'pnlResults')
 
         driver.get('https://service.nalog.ru/bi.do')
         self.radio_click(driver, 'unirad_0')
         username = self.input_key(driver, 'innPRS', key)
         self.bik(driver, 'bikPRS')
-        self.cap_loop(username, driver, 'captcha', 'btnSearch')
+        self.cap_loop(username, driver, 'errors_captcha', 'btnSearch')
         eighth = self.get_text(driver, 'pnlResultData')
 
         self.info = (
@@ -171,6 +173,6 @@ class Ul(object):
                 ('http://bankrot.fedresurs.ru/DebtorsSearch.aspx', sixth),
                 ('https://service.nalog.ru/zd.do', seventh),
                 ('https://service.nalog.ru/bi.do', eighth)
-                )
+                    )
         # print(input('close?: ', ))
         driver.close()
