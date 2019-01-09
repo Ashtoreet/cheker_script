@@ -57,6 +57,9 @@ ogrnip = keys.get('ogrnip')
 tu_ul = (innul, ogrn)
 tu_fl = (innfl, ogrnip)
 
+today = datetime.date.today().strftime('%d.%m.%yг')
+document = Document()
+
 if tu_fl != (None, None) and tu_ul != (None, None):
     print('Check Fl')
     fl = Fl(tu_fl)
@@ -70,33 +73,34 @@ if tu_fl != (None, None) and tu_ul != (None, None):
     ul.services()
     print(ul.info)
 
+    document.add_heading('ИНН {} | ОГРНИП {}'.format(fl.innfl, fl.ogrnip), level=1)
+    add_infotable(fl.info)
+    document.add_heading('ИНН {} | ОГРН {}'.format(ul.innul, ul.ogrn), level=1)
+    add_infotable(ul.info)
+
 elif tu_fl != (None, None):
-    print('Check Fl')
+    print('Check only Fl')
     fl = Fl(tu_fl)
     # fl.check_using_service()
     fl.services()
     print(fl.info)
 
+    document.add_heading('ИНН {} | ОГРНИП {}'.format(fl.innfl, fl.ogrnip), level=1)
+    add_infotable(fl.info)
+
 elif tu_ul != (None, None):
-    print('Check Ul')
+    print('Check only Ul')
     ul = Ul(tu_ul)
     # ul.check_using_service()
     ul.services()
     print(ul.info)
 
+    document.add_heading('ИНН {} | ОГРН {}'.format(ul.innul, ul.ogrn), level=1)
+    add_infotable(ul.info)
+
 else:
     print('Nothing to check.')
 
-today = datetime.date.today().strftime('%d.%m.%yг')
-document = Document()
-
-document.add_heading(fl.fio, level=1)
-document.add_paragraph('ИНН {} | ОГРНИП {}'.format(fl.innfl, fl.ogrnip))
-add_infotable(fl.info)
-
-document.add_heading(ul.name, level=1)
-document.add_paragraph('ИНН {} | ОГРН {}'.format(ul.innul, ul.ogrn))
-add_infotable(ul.info)
 
 document.add_page_break()
 
