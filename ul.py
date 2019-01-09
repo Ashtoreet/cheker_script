@@ -101,10 +101,7 @@ class Ul(object):
                 er = False
         print('Цифры с картинки введены верно')
 
-
-
     def services(self):
-
         key = [x for x in self.innul]
         if self.ogrn:
             ogrn = [x for x in self.ogrn]
@@ -144,7 +141,10 @@ class Ul(object):
         driver.get('https://service.nalog.ru/svl.do')
         username = self.input_key(driver, 'svlform_inn', key)
         driver.find_element_by_xpath("/html/body/div[1]/div[3]/div/div[1]/form/div[2]/button").click()
-        fifth = driver.find_element_by_class_name('container').text
+        try:
+            fifth = driver.find_element_by_class_name('container').text
+        except NoSuchElementException:
+            fifth = driver.find_element_by_class_name('panel').text
 
         driver.get('http://bankrot.fedresurs.ru/DebtorsSearch.aspx')
         username = self.input_key(driver, 'ctl00_cphBody_OrganizationCode1_CodeTextBox', key)
