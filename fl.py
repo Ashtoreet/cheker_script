@@ -61,7 +61,7 @@ class Fl(object):
             text = [row.text for row in rows]
             return text
 
-    def cap_loop(self, username, driver, id, btn_id=None):
+    def cap_loop(self, username, driver, btn_id=None):
         er = True
         while er:
             self.cap(driver)
@@ -70,7 +70,7 @@ class Fl(object):
             else:
                 username.submit()
             try:
-                er = driver.find_element_by_id(id).text
+                er = driver.find_element_by_id('errors_captcha').text
                 print(er)
             except NoSuchElementException:
                 er = False
@@ -127,7 +127,7 @@ class Fl(object):
         self.radio_click(driver, 'unirad_0')
         username = self.input_key(driver, "innPRS", key)
         self.bik(driver, "bikPRS")
-        self.cap_loop(username, driver, 'errors_captcha', 'btnSearch')
+        self.cap_loop(username, driver, 'btnSearch')
         second = self.get_text(driver, 'pnlResultData')
 
         # 3
@@ -135,12 +135,16 @@ class Fl(object):
         self.input_key(driver, 'ctl00_MainContent_txtCode', key)
         self.button(driver, 'ctl00_MainContent_btnSearch')
         time.sleep(5)
-        link = driver.find_element_by_class_name('fn')
-        name = link.text
-        link.click()
-        time.sleep(5)
-        third = self.get_text(driver, 'tabs')
-        print(name)
+        try:
+            link = driver.find_element_by_class_name('fn')
+            name = link.text
+            link.click()
+            time.sleep(5)
+            third = self.get_text(driver, 'tabs')
+            print(name)
+        except NoSuchElementException:
+            third = driver.find_element_by_id('ctl00_MainContent_upnIndEntrepreneurList').text
+            name = None
 
         # 4
         driver.get('http://bankrot.fedresurs.ru/DebtorsSearch.aspx')
@@ -151,29 +155,40 @@ class Fl(object):
         self.button(driver, 'ctl00_cphBody_btnSearch')
         fourth = self.get_text(driver, 'ctl00_cphBody_upList')
 
-        # 5, работает только с третьим пунктом(берет там name)
-        driver.get('http://bankrot.fedresurs.ru/DisqualificantsList.aspx')
-        self.input_key(driver, 'ctl00_cphBody_tbFio', name)
-        self.button(driver, 'ctl00_cphBody_btnSearch')
-        fifth = self.get_text(driver, 'ctl00_cphBody_upDisqList')
+
 
         # 6
         driver.get('https://service.nalog.ru/uwsfind.do')
         self.radio_click(driver, 'unirad_1')
         username = self.input_key(driver, 'ogrnIp', ogrnip)
-        self.cap_loop(username, driver, 'errors_captcha', 'btnSearch')
+        self.cap_loop(username, driver, 'btnSearch')
+        name = driver.find_element_by_class_name('uws-result-item-value').text
+        print(name)
         sixth = self.get_text(driver, 'pnlResult')
 
+        # 5, работает только с третьим пунктом(берет там name)
+        if name:
+            driver.get('http://bankrot.fedresurs.ru/DisqualificantsList.aspx')
+            self.input_key(driver, 'ctl00_cphBody_tbFio', name)
+            self.button(driver, 'ctl00_cphBody_btnSearch')
+            fifth = self.get_text(driver, 'ctl00_cphBody_upDisqList')
+        else:
+            fifth = 'Имя не определено'
+            
         # 7, работает только с третьим пунктом(берет там name)
-        driver.get('https://service.nalog.ru/disqualified.do')
-        userfam = name.split()[0]
-        print(userfam)
-        usernam = name.split()[1]
-        print(usernam)
-        self.input_key(driver, 'fam', userfam)
-        username = self.input_key(driver, 'nam', usernam)
-        self.cap_loop(username, driver, 'errors_captcha', 'btn-ok')
-        seventh = self.get_text(driver, 'resultPanel')
+        if name:
+            driver.get('https://service.nalog.ru/disqualified.do')
+            userfam = name.split()[0]
+            print(userfam)
+            usernam = name.split()[1]
+            print(usernam)
+            self.input_key(driver, 'fam', userfam)
+            username = self.input_key(driver, 'nam', usernam)
+            self.cap_loop(username, driver, 'btn-ok')
+            seventh = self.get_text(driver, 'resultPanel')
+        else:
+            seventh = 'Имя не определено'
+
 
 
         self.info = (
