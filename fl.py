@@ -12,7 +12,6 @@ class Fl(object):
         self.fio = fio
         self.info = info
 
-
     def cap(self, driver):
         captcha = driver.find_element_by_id('captcha')
         f = [x for x in input('введите капчу: ')]
@@ -76,7 +75,6 @@ class Fl(object):
                 er = False
         print('Цифры с картинки введены верно')
 
-
     # def check_using_service(self):
     #     # service_url = 'https://egrul.nalog.ru'
     #     service_url = 'file:///Users/Ksihris/projects/pro/service_pro/ser.html'
@@ -103,14 +101,11 @@ class Fl(object):
     #     user_input = input('Close?: ',)
     #     driver.close()
 
-
     def services(self):
-
         key = [x for x in self.innfl]
         ogrnip = [x for x in self.ogrnip]
         driver = webdriver.Chrome()
         # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
-
 
         # 1
         driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
@@ -155,8 +150,6 @@ class Fl(object):
         self.button(driver, 'ctl00_cphBody_btnSearch')
         fourth = self.get_text(driver, 'ctl00_cphBody_upList')
 
-
-
         # 6
         driver.get('https://service.nalog.ru/uwsfind.do')
         self.radio_click(driver, 'unirad_1')
@@ -174,7 +167,7 @@ class Fl(object):
             fifth = self.get_text(driver, 'ctl00_cphBody_upDisqList')
         else:
             fifth = 'Имя не определено'
-            
+
         # 7, работает только с третьим пунктом(берет там name)
         if name:
             driver.get('https://service.nalog.ru/disqualified.do')
@@ -188,8 +181,6 @@ class Fl(object):
             seventh = self.get_text(driver, 'resultPanel')
         else:
             seventh = 'Имя не определено'
-
-
 
         self.info = (
                     ('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html : ', first),
