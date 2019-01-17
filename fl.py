@@ -103,7 +103,8 @@ class Fl(object):
 
     def services(self):
         key = [x for x in self.innfl]
-        ogrnip = [x for x in self.ogrnip]
+        if self.ogrnip:
+            ogrnip = [x for x in self.ogrnip]
         driver = webdriver.Chrome()
         # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
 
@@ -130,16 +131,24 @@ class Fl(object):
         self.input_key(driver, 'ctl00_MainContent_txtCode', key)
         self.button(driver, 'ctl00_MainContent_btnSearch')
         time.sleep(5)
+
         try:
             link = driver.find_element_by_class_name('fn')
-            name = link.text
+            self.fio = link.text
+            self.ogrnip = driver.find_element_by_id(
+                    'ctl00_MainContent_upnIndEntrepreneurList'
+                ).text.split(' ').pop().replace(')', '')
             link.click()
             time.sleep(5)
+
             third = self.get_text(driver, 'tabs')
-            print(name)
+            print(self.fio)
         except NoSuchElementException:
             third = driver.find_element_by_id('ctl00_MainContent_upnIndEntrepreneurList').text
-            name = None
+            self.ogrnip = driver.find_element_by_id(
+                    'ctl00_MainContent_upnIndEntrepreneurList'
+                ).text.split(' ').pop().replace(')', '')
+            self.fio = None
 
         # 4
         driver.get('http://bankrot.fedresurs.ru/DebtorsSearch.aspx')
@@ -151,30 +160,37 @@ class Fl(object):
         fourth = self.get_text(driver, 'ctl00_cphBody_upList')
 
         # 6
-        driver.get('https://service.nalog.ru/uwsfind.do')
-        self.radio_click(driver, 'unirad_1')
-        username = self.input_key(driver, 'ogrnIp', ogrnip)
-        self.cap_loop(username, driver, 'btnSearch')
-        name = driver.find_element_by_class_name('uws-result-item-value').text
-        print(name)
-        sixth = self.get_text(driver, 'pnlResult')
+        if self.ogrnip:
+            driver.get('https://service.nalog.ru/uwsfind.do')
+            self.radio_click(driver, 'unirad_1')
+            username = self.input_key(driver, 'ogrnIp', self.ogrnip)
+            self.cap_loop(username, driver, 'btnSearch')
+            self.fio = driver.find_element_by_class_name('uws-result-item-value').text
+            print(self.fio)
+            sixth = self.get_text(driver, 'pnlResult')
+        else:
+            sixth = 'Не проверяли'
 
         # 5, работает только с третьим пунктом(берет там name)
-        if name:
+        if self.fio:
             driver.get('http://bankrot.fedresurs.ru/DisqualificantsList.aspx')
-            self.input_key(driver, 'ctl00_cphBody_tbFio', name)
+            self.input_key(driver, 'ctl00_cphBody_tbFio', self.fio)
             self.button(driver, 'ctl00_cphBody_btnSearch')
             fifth = self.get_text(driver, 'ctl00_cphBody_upDisqList')
         else:
             fifth = 'Имя не определено'
 
+
         # 7, работает только с третьим пунктом(берет там name)
-        if name:
+        if self.fio:
             driver.get('https://service.nalog.ru/disqualified.do')
-            userfam = name.split()[0]
+            userfam = self.fio.split()[0]
             print(userfam)
-            usernam = name.split()[1]
+            usernam = self.fio.split()[1]
             print(usernam)
+            userotch = self.fio.split()[2]
+            print(userotch)
+            self.input_key(driver, 'otch', userotch)
             self.input_key(driver, 'fam', userfam)
             username = self.input_key(driver, 'nam', usernam)
             self.cap_loop(username, driver, 'btn-ok')
@@ -191,6 +207,5 @@ class Fl(object):
                     ('https://service.nalog.ru/uwsfind.do', sixth if sixth else 'ошибка ввода'),
                     ('https://service.nalog.ru/disqualified.do', seventh)
             )
-        # print(input('close?: ', ))
         driver.close()
-        return name
+        return self.fio
