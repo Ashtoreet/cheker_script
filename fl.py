@@ -165,8 +165,9 @@ class Fl(object):
             self.radio_click(driver, 'unirad_1')
             username = self.input_key(driver, 'ogrnIp', self.ogrnip)
             self.cap_loop(username, driver, 'btnSearch')
-            self.fio = driver.find_element_by_class_name('uws-result-item-value').text
-            print(self.fio)
+            if self.fio is None:
+                self.fio = driver.find_element_by_class_name('uws-result-item-value').text
+                print(self.fio)
             sixth = self.get_text(driver, 'pnlResult')
         else:
             sixth = 'Не проверяли'
