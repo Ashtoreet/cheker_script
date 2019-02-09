@@ -110,9 +110,13 @@ class Ul(object):
             driver.get(url)
             username = self.input_key(driver, 'ogrnUl', ogrn)
             self.cap_loop(username, driver, 'btnSearch')
-            dict_div[url] = self.get_text(driver, 'tableResultData')
+            table = self.get_text(driver, 'tableResultData')
+            if table:
+                dict_div[url] = table
+            else:
+                dict_div[url] = self.get_text(driver, 'pnlResult')
         else:
-            dict_div[url] = 'Не проверяли'
+            print('не проверяли')
 
         url = services[2]
         # 'https://service.nalog.ru/disqualified.do'
@@ -121,6 +125,7 @@ class Ul(object):
         self.cap_loop(username, driver, 'float-right')
         # third = self.get_text(driver, 'resultPanel')
         dict_div[url] = self.get_text(driver, 'resultPanel')
+
 
         url = services[3]
         # 'http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html'
@@ -154,6 +159,7 @@ class Ul(object):
         self.button(driver, 'ctl00_cphBody_btnSearch')
         # sixth = self.get_text(driver, 'ctl00_cphBody_upList')
         dict_div[url] = self.get_text(driver, 'ctl00_cphBody_upList')
+
 
         url = services[6]
         # 'https://service.nalog.ru/zd.do'
@@ -200,6 +206,16 @@ if __name__ == '__main__':
         'https://service.nalog.ru/zd.do',
         'https://service.nalog.ru/bi.do',
     )
+    headers = (
+        'Федресурс',
+        'Сведения о юридических лицах и индивидуальных предпринимателях, в отношении которых представлены документы для государственной регистрации',
+        'Поиск сведений в реестре дисквалифицированных лиц',
+        'Портал Закупок Результаты поиска',
+        'Сведения о лицах, в отношении которых факт невозможности участия (осуществления руководства) в организации установлен (подтвержден) в судебном порядке',
+        'Единый федеральный реестр сведений о банкротстве',
+        'Сведения о юридических лицах, имеющих задолженность по уплате налогов и/или не представляющих налоговую отчетность более года',
+        'Система информирования банков о состоянии обработки электронных документов (311-П, 440-П)',
+    )
 
 
 
@@ -217,10 +233,13 @@ if __name__ == '__main__':
     dict_div = ul.info
 
     document = Document()
-
+    index_header = 0
     for k, v in dict_div.items():
         soup = bs(v, 'lxml')
-        head = k
+
+
+        head = headers[index_header]
+        index_header += 1
 
         document.add_heading(head, level=2)
         try:
@@ -232,23 +251,35 @@ if __name__ == '__main__':
 
         if soup_table:
             soup_rows = soup_table.find_all('tr')
-            soup_cols = soup_table.find_all('tr')[0].find_all('td')
+            try:
+                soup_cols = soup_table.find_all('tr')[1].find_all('td')
+            except IndexError:
+                soup_cols = soup_table.find_all('tr')[0].find_all('td')
+
             len_rows = len(soup_rows)
-            print('len_rows', len_rows)
             len_cols = len(soup_cols)
-            print('len_cols', len_cols)
 
             doc_table = document.add_table(rows=len_rows, cols=len_cols, style='Table Grid')
 
             for idx, soup_row in enumerate(soup_rows):
                 soup_cols = soup_row.find_all('td') or soup_row.find_all('th')
-                print('idx', idx)
+                # print('idx -', idx, 'cols -', soup_cols, 'rows - ', soup_rows)
+                # print('idx', idx)
                 doc_cells = doc_table.rows[idx].cells
+                # print(doc_cells, type(doc_cells))
                 for i, soup_col in enumerate(soup_cols):
-                    print('i', i)
+                    # print('i', i)
                     doc_cells[i].text = soup_col.text
         else:
-            print('ой, тут не таблица')
+            try:
+                nf = soup.find('p').text
+            except NoSuchElementException:
+                nf = soup.get_text()
+            except AttributeError:
+                nf = soup.get_text()
+
+            document.add_paragraph(nf)
+            # print('ой, тут не таблица')
         document.add_paragraph()
 
     document.save(file)

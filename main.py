@@ -163,3 +163,17 @@ else:
 document.add_page_break()
 document.save(filename)
 print('сохраняем документ')
+
+
+# import requests
+# from bs4 import BeautifulSoup as bs
+# from dateutil import parser
+# date_limit = 60
+# inn = ''
+#
+# def get_registraton_date(inn, date_limit):
+#      response = requests.get('https://zachestnyibiznes.ru/search?query={}'.format(inn))
+#      soup = bs(response.text, 'lxml')
+#      a = soup.find("td", itemprop="foundingDate").text
+#      date_delta = (datetime.today() - parser.parse(a)).days
+#      return date_delta < date_limit
