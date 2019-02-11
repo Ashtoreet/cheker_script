@@ -94,81 +94,81 @@ class Ul(object):
         driver = webdriver.Chrome()
 
         # url = 'https://fedresurs.ru'
-        url = services[0]
-        driver.get(url)
-        username = driver.find_element_by_css_selector("input[name='searchString']")
-        for i in key:
-            time.sleep(.05)
-            username.send_keys(i)
-        driver.find_element_by_class_name("btn").click()
-        dict_div[url] = self.get_text(driver, 'tab-content')
-        # fedresurs = self.get_text(driver, 'search-result')
-
-        if self.ogrn:
-            url = services[1]
-            # 'https://service.nalog.ru/uwsfind.do'
-            driver.get(url)
-            username = self.input_key(driver, 'ogrnUl', ogrn)
-            self.cap_loop(username, driver, 'btnSearch')
-            table = self.get_text(driver, 'tableResultData')
-            if table:
-                dict_div[url] = table
-            else:
-                dict_div[url] = self.get_text(driver, 'pnlResult')
-        else:
-            print('не проверяли')
-
-        url = services[2]
-        # 'https://service.nalog.ru/disqualified.do'
-        driver.get(url)
-        username = self.input_key(driver, 'orgInn', key)
-        self.cap_loop(username, driver, 'float-right')
-        # third = self.get_text(driver, 'resultPanel')
-        dict_div[url] = self.get_text(driver, 'resultPanel')
-
-
-        url = services[3]
-        # 'http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html'
-        driver.get(url)
-        username = self.input_key(driver, 'searchString', key)
-        username.submit()
-        time.sleep(random.randint(2, 7))
-        try:
-            # fourth = driver.find_element_by_css_selector('table.searchDocTable').text
-            dict_div[url] = self.get_text(driver, 'margBtm10')
-        except NoSuchElementException:
-            dict_div[url] = 'Поиск не дал результатов.'
-
-
-        url = services[4]
-        # 'https://service.nalog.ru/svl.do'
-        driver.get(url)
-        username = self.input_key(driver, 'svlform_inn', key)
-        self.cap_loop(username, driver, 'btn-ok')
-        try:
-            # fifth = driver.find_element_by_class_name('container').text
-            dict_div[url] = self.get_text(driver, 'container')
-        except NoSuchElementException:
-            # fifth = driver.find_element_by_class_name('panel').text
-            dict_div[url] = self.get_text(driver, 'panel')
-
-        url = services[5]
-        # 'http://bankrot.fedresurs.ru/DebtorsSearch.aspx'
-        driver.get(url)
-        username = self.input_key(driver, 'ctl00_cphBody_OrganizationCode1_CodeTextBox', key)
-        self.button(driver, 'ctl00_cphBody_btnSearch')
-        # sixth = self.get_text(driver, 'ctl00_cphBody_upList')
-        dict_div[url] = self.get_text(driver, 'ctl00_cphBody_upList')
-
-
-        url = services[6]
-        # 'https://service.nalog.ru/zd.do'
-        driver.get(url)
-        username = self.input_key(driver, 'inn', key)
-        captcha = driver.find_element_by_id('captcha')
-        self.cap_loop(username, driver, 'btn_send')
-        # seventh = self.get_text(driver, 'pnlResults')
-        dict_div[url] = self.get_text(driver, 'pnlResults')
+        # url = services[0]
+        # driver.get(url)
+        # username = driver.find_element_by_css_selector("input[name='searchString']")
+        # for i in key:
+        #     time.sleep(.05)
+        #     username.send_keys(i)
+        # driver.find_element_by_class_name("btn").click()
+        # dict_div[url] = self.get_text(driver, 'tab-content')
+        # # fedresurs = self.get_text(driver, 'search-result')
+        #
+        # if self.ogrn:
+        #     url = services[1]
+        #     # 'https://service.nalog.ru/uwsfind.do'
+        #     driver.get(url)
+        #     username = self.input_key(driver, 'ogrnUl', ogrn)
+        #     self.cap_loop(username, driver, 'btnSearch')
+        #     table = self.get_text(driver, 'tableResultData')
+        #     if table:
+        #         dict_div[url] = table
+        #     else:
+        #         dict_div[url] = self.get_text(driver, 'pnlResult')
+        # else:
+        #     print('не проверяли')
+        #
+        # url = services[2]
+        # # 'https://service.nalog.ru/disqualified.do'
+        # driver.get(url)
+        # username = self.input_key(driver, 'orgInn', key)
+        # self.cap_loop(username, driver, 'float-right')
+        # # third = self.get_text(driver, 'resultPanel')
+        # dict_div[url] = self.get_text(driver, 'resultPanel')
+        #
+        #
+        # # url = services[3]
+        # # # 'http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html'
+        # # driver.get(url)
+        # # username = self.input_key(driver, 'searchString', key)
+        # # username.submit()
+        # # time.sleep(random.randint(2, 7))
+        # # try:
+        # #     # fourth = driver.find_element_by_css_selector('table.searchDocTable').text
+        # #     dict_div[url] = self.get_text(driver, 'margBtm10')
+        # # except NoSuchElementException:
+        # #     dict_div[url] = 'Поиск не дал результатов.'
+        #
+        #
+        # url = services[4]
+        # # 'https://service.nalog.ru/svl.do'
+        # driver.get(url)
+        # username = self.input_key(driver, 'svlform_inn', key)
+        # self.cap_loop(username, driver, 'btn-ok')
+        # try:
+        #     # fifth = driver.find_element_by_class_name('container').text
+        #     dict_div[url] = self.get_text(driver, 'container')
+        # except NoSuchElementException:
+        #     # fifth = driver.find_element_by_class_name('panel').text
+        #     dict_div[url] = self.get_text(driver, 'panel')
+        #
+        # url = services[5]
+        # # 'http://bankrot.fedresurs.ru/DebtorsSearch.aspx'
+        # driver.get(url)
+        # username = self.input_key(driver, 'ctl00_cphBody_OrganizationCode1_CodeTextBox', key)
+        # self.button(driver, 'ctl00_cphBody_btnSearch')
+        # # sixth = self.get_text(driver, 'ctl00_cphBody_upList')
+        # dict_div[url] = self.get_text(driver, 'ctl00_cphBody_upList')
+        #
+        #
+        # url = services[6]
+        # # 'https://service.nalog.ru/zd.do'
+        # driver.get(url)
+        # username = self.input_key(driver, 'inn', key)
+        # captcha = driver.find_element_by_id('captcha')
+        # self.cap_loop(username, driver, 'btn_send')
+        # # seventh = self.get_text(driver, 'pnlResults')
+        # dict_div[url] = self.get_text(driver, 'pnlResults')
 
         url = services[7]
         # 'https://service.nalog.ru/bi.do'
@@ -244,32 +244,33 @@ if __name__ == '__main__':
         document.add_heading(head, level=2)
         try:
             # soup_table = soup.find('table', class_='search-result')
-            soup_table = soup.find('table')
+            soup_tables = soup.find_all('table')
             print('soup_table is ok!')
         except Exception as e:
             print('soup_table is not ok!' + e)
 
-        if soup_table:
-            soup_rows = soup_table.find_all('tr')
-            try:
-                soup_cols = soup_table.find_all('tr')[1].find_all('td')
-            except IndexError:
-                soup_cols = soup_table.find_all('tr')[0].find_all('td')
+        if soup_tables:
+            for soup_table in soup_tables:
+                soup_rows = soup_table.find_all('tr')
+                try:
+                    soup_cols = soup_table.find_all('tr')[1].find_all('td')
+                except IndexError:
+                    soup_cols = soup_table.find_all('tr')[0].find_all('td')
 
-            len_rows = len(soup_rows)
-            len_cols = len(soup_cols)
+                len_rows = len(soup_rows)
+                len_cols = len(soup_cols)
 
-            doc_table = document.add_table(rows=len_rows, cols=len_cols, style='Table Grid')
+                doc_table = document.add_table(rows=len_rows, cols=len_cols, style='Table Grid')
 
-            for idx, soup_row in enumerate(soup_rows):
-                soup_cols = soup_row.find_all('td') or soup_row.find_all('th')
-                # print('idx -', idx, 'cols -', soup_cols, 'rows - ', soup_rows)
-                # print('idx', idx)
-                doc_cells = doc_table.rows[idx].cells
-                # print(doc_cells, type(doc_cells))
-                for i, soup_col in enumerate(soup_cols):
-                    # print('i', i)
-                    doc_cells[i].text = soup_col.text
+                for idx, soup_row in enumerate(soup_rows):
+                    soup_cols = soup_row.find_all('td') or soup_row.find_all('th')
+                    # print('idx -', idx, 'cols -', soup_cols, 'rows - ', soup_rows)
+                    # print('idx', idx)
+                    doc_cells = doc_table.rows[idx].cells
+                    # print(doc_cells, type(doc_cells))
+                    for i, soup_col in enumerate(soup_cols):
+                        # print('i', i)
+                        doc_cells[i].text = soup_col.text
         else:
             try:
                 nf = soup.find('p').text

@@ -93,29 +93,29 @@ class Fl(object):
         # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
 
 
-
-        # 1
-        url = services[0]
-        driver.get(url)
-        # driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
-        username = self.input_key(driver, 'searchString', key)
-        username.submit()
-        time.sleep(random.randint(2, 7))
-        # try:
-        dict_div[url] = self.get_text(driver, 'margBtm10')
-            # first = driver.find_element_by_css_selector('table.searchDocTable').text
-        # except NoSuchElementException:
-        #     dict_div[url] = 'Ничего не найдено.'
-
-        # 2
-        url = services[1]
-        driver.get(url)
-        # driver.get('https://service.nalog.ru/bi.do')
-        self.radio_click(driver, 'unirad_0')
-        username = self.input_key(driver, "innPRS", key)
-        self.bik(driver, "bikPRS")
-        self.cap_loop(username, driver, 'btnSearch')
-        dict_div[url] = self.get_text(driver, 'pnlResultData')
+        #
+        # # 1
+        # url = services[0]
+        # driver.get(url)
+        # # driver.get('http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html')
+        # username = self.input_key(driver, 'searchString', key)
+        # username.submit()
+        # time.sleep(random.randint(2, 7))
+        # # try:
+        # dict_div[url] = self.get_text(driver, 'margBtm10')
+        #     # first = driver.find_element_by_css_selector('table.searchDocTable').text
+        # # except NoSuchElementException:
+        # #     dict_div[url] = 'Ничего не найдено.'
+        #
+        # # 2
+        # url = services[1]
+        # driver.get(url)
+        # # driver.get('https://service.nalog.ru/bi.do')
+        # self.radio_click(driver, 'unirad_0')
+        # username = self.input_key(driver, "innPRS", key)
+        # self.bik(driver, "bikPRS")
+        # self.cap_loop(username, driver, 'btnSearch')
+        # dict_div[url] = self.get_text(driver, 'pnlResultData')
 
         # 3
         url = services[2]
@@ -123,8 +123,14 @@ class Fl(object):
         time.sleep(random.randint(2, 7))
         # driver.get('http://se.fedresurs.ru/IndividualEntrepreneurs')
         self.input_key(driver, 'ctl00_MainContent_txtCode', key)
+        print(input('напишите тут ', ))
         self.button(driver, 'ctl00_MainContent_btnSearch')
+        alert = driver.switch_to.alert
+        print(input('напишите тут ', ))
+        alert.accept()
+        print(input('напишите тут ', ))
         time.sleep(random.randint(2, 7))
+        self.button(driver, 'ctl00_MainContent_btnSearch')
         # try:
         link = driver.find_element_by_class_name('fn')
         self.fio = link.text
@@ -133,7 +139,7 @@ class Fl(object):
             ).text.split(' ').pop().replace(')', '')
         link.click()
         time.sleep(random.randint(2, 7))
-
+        print(input('напишите тут ', ))
         dict_div[url] = self.get_text(driver, 'vcard')
         print(self.fio)
         # except NoSuchElementException:
