@@ -1,9 +1,8 @@
-from key import Key
-from ul import Ul
-from fl import Fl
+from service import Service
 import datetime
 from docx import Document
-
+from selenium.common.exceptions import NoSuchElementException
+from bs4 import BeautifulSoup as bs
 
 services = (
     'https://fedresurs.ru',
@@ -15,7 +14,20 @@ services = (
     'https://service.nalog.ru/zd.do',
     'https://service.nalog.ru/bi.do',
 )
-dict_div = {}
+headers = (
+        'Федресурс',
+        'Сведения о юридических лицах и индивидуальных предпринимателях, '
+        'в отношении которых представлены документы для государственной регистрации',
+        'Поиск сведений в реестре дисквалифицированных лиц',
+        'Портал Закупок Результаты поиска',
+        'Сведения о лицах, в отношении которых факт невозможности участия '
+        '(осуществления руководства) в организации установлен (подтвержден) в судебном порядке',
+        'Единый федеральный реестр сведений о банкротстве. Должники.',
+        'Сведения о юридических лицах, имеющих задолженность по уплате налогов и/или'
+        ' не представляющих налоговую отчетность более года',
+        'Система информирования банков о состоянии обработки электронных документов (311-П, 440-П)',
+        'Единый федеральный реестр сведений о банкротстве. Дисквалифицированные лица.',
+    )
 
 
 def add_infotable(info):
@@ -36,11 +48,17 @@ def add_infotable(info):
 # data acquisition
 def user_input():
     var = False
+    print('Программа заработала, для выхода нажмите Ctrl + C.')
+
     while var is False:
         key = input('Введите ключ: ', )
         try:
             int(key)
-            return key
+            if len(key) is 10 or len(key) is 12 or len(key) is 13 or len(key) is 15:
+                return key
+            else:
+                print('Неверные данные.')
+                var = False
         except ValueError:
             if not key:
                 return False
@@ -48,132 +66,77 @@ def user_input():
             var = False
 
 
-def loop_keys():
-    keys = {}
-    for i in range(4):
-        u_input = user_input()
-        if u_input:
-            key = Key(u_input)
-            key.determine_type_of_key()
-            name = key.name
-            key_str = key.key
-            keys[name] = key_str
-    return keys
-# end data acquisition
-# loop_keys() - словарь с данными от пользователя
+u_input = user_input()
 
+print(u_input)
 
-print('Вводите ключи по одному.')
-keys = loop_keys()
-
-innul = keys.get('innul')
-ogrn = keys.get('ogrn')
-innfl = keys.get('innfl')
-ogrnip = keys.get('ogrnip')
-
-tu_ul = (innul, ogrn)
-tu_fl = (innfl, ogrnip)
+service = Service(u_input)
+ul, inn, ogrn, address, boss_name, company_name, bosses_inn, dict_div = service.zachestnyibiznes()
+str_ogrn = ''.join(ogrn)
 
 today = datetime.date.today().strftime('%d.%m.%y')
 
 document = Document()
 
-if tu_fl != (None, None) and tu_ul != (None, None):
-    print('Check Fl')
-    fl = Fl(tu_fl)
-    name = fl.services()
-    print(fl.info)
+document.add_heading('{}'.format(company_name), level=1)
+document.add_heading('ИНН: {}'.format(inn), level=2)
+document.add_heading('ОГРН: {}'.format(str_ogrn), level=2)
+document.add_heading('{}'.format(boss_name), level=2)
 
-    print('Check Ul')
-    ul = Ul(tu_ul)
-    ul.services()
-    print(ul.info)
-
-    document.add_heading('ИНН: {}'.format(fl.innfl), level=1)
-    document.add_heading('ОГРНИП: {}'.format(fl.ogrnip), level=1)
-    document.add_heading('{}'.format(name), level=2)
-    add_infotable(fl.info)
-    document.add_heading('ИНН: {}'.format(ul.innul), level=1)
-    document.add_heading('ОГРН: {}'.format(ul.ogrn), level=1)
-    add_infotable(ul.info)
-
-    filename = '{} - {}, {}.docx'.format(today, fl.innfl, ul.innul)
-
-elif tu_fl != (None, None):
-    print('Check only Fl')
-    fl = Fl(tu_fl)
-    name = fl.services()
-    print(fl.info)
-
-    document.add_heading('ИНН: {}'.format(fl.innfl), level=1)
-    document.add_heading('ОГРНИП: {}'.format(fl.ogrnip), level=1)
-    document.add_heading('{}'.format(name), level=2)
-
-    add_infotable(fl.info)
-
-    filename = '{} - {}.docx'.format(today, fl.innfl)
-
-elif tu_ul != (None, None):
-    print('Check only Ul')
-    ul = Ul(tu_ul)
-    ul.services()
-    print(ul.info)
-
-    document.add_heading('ИНН: {}'.format(ul.innul), level=1)
-    document.add_heading('ОГРН: {}'.format(ul.ogrn), level=1)
-    add_infotable(ul.info)
-
-    filename = '{} - {}.docx'.format(today, ul.innul)
-
-else:
-    print('Nothing to check.')
+filename = '{} - {}.docx'.format(inn, today)
+# filename = '{}.docx'.format(today)
 
 
+index_header = 0
+for k, v in dict_div.items():
+    soup = bs(v, 'lxml')
 
-# дорабатываю
-# for k, v in dict_div.items():
-#     soup = bs(v, 'lxml')
-#     head = k
-#
-#     document.add_heading(head, level=2)
-#     try:
-#         soup_table = soup.find('table', class_='search-result')
-#         print('soup_table is ok!')
-#     except Exception as e:
-#         print('soup_table is not ok!' + e)
-#
-#     if soup_table:
-#         soup_rows = soup_table.find_all('tr')
-#         soup_cols = soup_table.find_all('tr')[1].find_all('td')
-#         len_rows = len(soup_rows)
-#         len_cols = len(soup_cols)
-#
-#         doc_table = document.add_table(rows=len_rows, cols=len_cols, style='Table Grid')
-#
-#         for idx, soup_row in enumerate(soup_rows):
-#             soup_cols = soup_row.find_all('td') or soup_row.find_all('th')
-#
-#             doc_cells = doc_table.rows[idx].cells
-#             for i, soup_col in enumerate(soup_cols):
-#                 doc_cells[i].text = soup_col.text
-#     else:
-#         print('ой, тут не таблица')
-#     document.add_paragraph()
+    head = headers[index_header]
+    index_header += 1
 
-document.add_page_break()
+    document.add_heading(head, level=2)
+    try:
+        # soup_table = soup.find('table', class_='search-result')
+        soup_tables = soup.find_all('table')
+        print('soup_table is ok!')
+    except Exception as e:
+        print('soup_table is not ok!' + e)
+
+    if soup_tables:
+        for soup_table in soup_tables:
+            soup_rows = soup_table.find_all('tr')
+            try:
+                soup_cols = soup_table.find_all('tr')[1].find_all('td')
+            except IndexError:
+                soup_cols = soup_table.find_all('tr')[0].find_all('td')
+
+            len_rows = len(soup_rows)
+            len_cols = len(soup_cols)
+
+            doc_table = document.add_table(rows=len_rows, cols=len_cols, style='Table Grid')
+
+            for idx, soup_row in enumerate(soup_rows):
+                soup_cols = soup_row.find_all('td') or soup_row.find_all('th')
+                # print('idx -', idx, 'cols -', soup_cols, 'rows - ', soup_rows)
+                # print('idx', idx)
+                doc_cells = doc_table.rows[idx].cells
+                # print(doc_cells, type(doc_cells))
+                for i, soup_col in enumerate(soup_cols):
+                    # print('i', i)
+                    doc_cells[i].text = soup_col.text
+    else:
+        try:
+            nf = soup.find('p').text
+        except NoSuchElementException:
+            nf = soup.get_text()
+        except AttributeError:
+            nf = soup.get_text()
+
+        document.add_paragraph(nf)
+        # print('ой, тут не таблица')
+    document.add_paragraph()
+
+
+# document.add_page_break()
 document.save(filename)
 print('сохраняем документ')
-
-
-# import requests
-# from bs4 import BeautifulSoup as bs
-# from dateutil import parser
-# date_limit = 60
-# inn = ''
-#
-# def get_registraton_date(inn, date_limit):
-#      response = requests.get('https://zachestnyibiznes.ru/search?query={}'.format(inn))
-#      soup = bs(response.text, 'lxml')
-#      a = soup.find("td", itemprop="foundingDate").text
-#      date_delta = (datetime.today() - parser.parse(a)).days
-#      return date_delta < date_limit
