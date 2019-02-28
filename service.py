@@ -39,9 +39,9 @@ class Service:
         'Единый федеральный реестр сведений о банкротстве. Дисквалифицированные лица.',
     )
 
-    def __init__(self, key, dict_div={}, ul=None):
+    def __init__(self, key, ul, dict_service={}):
         self.key = key
-        self.dict_div = dict_div
+        self.dict_service = dict_service
         self.ul = ul
 
     def bik(self, driver, id_name):
@@ -65,7 +65,7 @@ class Service:
     def input_key(self, driver, form_id, key):
         username = driver.find_element_by_id(form_id)
         for i in key:
-            time.sleep(.05)
+            time.sleep(.06)
             username.send_keys(i)
         return username
 
@@ -123,7 +123,7 @@ class Service:
 
     def url(self, proxi, link):
         ua = UserAgent()
-        header = {'User-Agent':str(ua.chrome)}
+        header = {'User-Agent': str(ua.chrome)}
         ya = link
         res = requests.get(ya, proxies={'http': 'http://'+proxi}).text
         return res
@@ -143,7 +143,7 @@ class Service:
         self.button(driver, 'ctl00_Button2')
         result = driver.find_element_by_id('ctl00_MainContent_upnCompanyList')
         result.find_element_by_class_name('title').click()
-        self.dict_div[url] = self.get_text(driver, 'columntext')
+        self.dict_service[url] = self.get_text(driver, 'columntext')
         print('se_fedresurs')
 
     def nalog_uwsfind_do(self, driver, ogrn):
@@ -160,17 +160,17 @@ class Service:
             self.cap_loop(username, driver, 'btnSearch')
             table = self.get_text(driver, 'tableResultData')
             if table:
-                self.dict_div[url] = table
+                self.dict_service[url] = table
             else:
-                self.dict_div[url] = self.get_text(driver, 'pnlResult')
+                self.dict_service[url] = self.get_text(driver, 'pnlResult')
         else:
             self.radio_click(driver, 'unirad_1')
             username = self.input_key(driver, 'ogrnIp', ogrn)
             self.cap_loop(username, driver, 'btnSearch')
 
-            self.dict_div[url] = self.get_text(driver, 'pnlResult')
+            self.dict_service[url] = self.get_text(driver, 'pnlResult')
         print('nalog_uwsfind_do')
-        return self.dict_div
+        return self.dict_service
 
     def nalog_disqualified_do(self, driver, boss_name):
         """
@@ -182,7 +182,7 @@ class Service:
         if self.ul is True:
             username = self.input_key(driver, 'orgInn', self.key)
             self.cap_loop(username, driver, 'float-right')
-            self.dict_div[url] = self.get_text(driver, 'resultPanel')
+            self.dict_service[url] = self.get_text(driver, 'resultPanel')
         else:
             if boss_name:
                 userfam = boss_name.split()[0]
@@ -191,11 +191,14 @@ class Service:
                 print(usernam)
                 userotch = boss_name.split()[2]
                 print(userotch)
+                time.sleep(random.randint(3, 7))
                 self.input_key(driver, 'otch', userotch)
+                time.sleep(random.randint(3, 7))
                 self.input_key(driver, 'fam', userfam)
+                time.sleep(random.randint(3, 7))
                 username = self.input_key(driver, 'nam', usernam)
                 self.cap_loop(username, driver, 'btn-ok')
-                self.dict_div[url] = self.get_text(driver, 'resultPanel')
+                self.dict_service[url] = self.get_text(driver, 'resultPanel')
             else:
                 print('Имя не определено')
         print('nalog_disqualified_do')
@@ -205,14 +208,12 @@ class Service:
         http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html
         """
         url = self.services[3]
-        # 'http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html'
         driver.get(url)
         username = self.input_key(driver, 'searchString', key)
         username.submit()
         time.sleep(random.randint(2, 7))
         try:
-            # fourth = driver.find_element_by_css_selector('table.searchDocTable').text
-            self.dict_div[url] = self.get_text(driver, 'margBtm10')
+            self.dict_service[url] = self.get_text(driver, 'margBtm10')
         except NoSuchElementException:
             print('Поиск не дал результатов.')
         print('zakupki')
@@ -222,16 +223,13 @@ class Service:
         https://service.nalog.ru/svl.do
         """
         url = self.services[4]
-        # 'https://service.nalog.ru/svl.do'
         driver.get(url)
         username = self.input_key(driver, 'svlform_inn', key)
         self.cap_loop(username, driver, 'btn-ok')
         try:
-            # fifth = driver.find_element_by_class_name('container').text
-            self.dict_div[url] = self.get_text(driver, 'container')
+            self.dict_service[url] = self.get_text(driver, 'container')
         except NoSuchElementException:
-            # fifth = driver.find_element_by_class_name('panel').text
-            self.dict_div[url] = self.get_text(driver, 'panel')
+            self.dict_service[url] = self.get_text(driver, 'panel')
         print('nalog_svl_do')
 
     def bankrot_fedresurs_debtorssearch(self, driver, key):
@@ -241,17 +239,16 @@ class Service:
         url = self.services[5]
         driver.get(url)
         if self.ul is True:
-            # 'http://bankrot.fedresurs.ru/DebtorsSearch.aspx'
             self.input_key(driver, 'ctl00_cphBody_OrganizationCode1_CodeTextBox', key)
             self.button(driver, 'ctl00_cphBody_btnSearch')
-            self.dict_div[url] = self.get_text(driver, 'ctl00_cphBody_upList')
+            self.dict_service[url] = self.get_text(driver, 'ctl00_cphBody_upList')
         else:
             time.sleep(random.randint(2, 7))
             self.radio_click(driver, 'ctl00_cphBody_rblDebtorType_1')
             time.sleep(random.randint(2, 7))
             self.input_key(driver, 'ctl00_cphBody_PersonCode1_CodeTextBox', key)
             self.button(driver, 'ctl00_cphBody_btnSearch')
-            self.dict_div[url] = self.get_text(driver, 'ctl00_cphBody_upList')
+            self.dict_service[url] = self.get_text(driver, 'ctl00_cphBody_upList')
         print('bankrot_fedresurs_debtorssearch')
 
     def nalog_zd_do(self, driver, key):
@@ -259,13 +256,10 @@ class Service:
         https://service.nalog.ru/zd.do
         """
         url = self.services[6]
-        # 'https://service.nalog.ru/zd.do'
         driver.get(url)
         username = self.input_key(driver, 'inn', key)
-        # captcha = driver.find_element_by_id('captcha')
         self.cap_loop(username, driver, 'btn_send')
-        # seventh = self.get_text(driver, 'pnlResults')
-        self.dict_div[url] = self.get_text(driver, 'pnlResults')
+        self.dict_service[url] = self.get_text(driver, 'pnlResults')
         print('nalog_zd_do')
 
     def nalog_bi_do(self, driver, key):
@@ -273,14 +267,12 @@ class Service:
         https://service.nalog.ru/bi.do
         """
         url = self.services[7]
-        # 'https://service.nalog.ru/bi.do'
         driver.get(url)
         self.radio_click(driver, 'unirad_0')
         username = self.input_key(driver, 'innPRS', key)
         self.bik(driver, 'bikPRS')
         self.cap_loop(username, driver, 'btnSearch')
-        # eighth = self.get_text(driver, 'pnlResultData')
-        self.dict_div[url] = self.get_text(driver, 'pnlResultData')
+        self.dict_service[url] = self.get_text(driver, 'pnlResultData')
         print('nalog_bi_do')
 
     def bankrot_fedresurs_disqualificantslist(self, driver, boss_name):
@@ -293,7 +285,7 @@ class Service:
             driver.get(url)
             self.input_key(driver, 'ctl00_cphBody_tbFio', boss_name)
             self.button(driver, 'ctl00_cphBody_btnSearch')
-            self.dict_div[url] = self.get_text(driver, 'ctl00_cphBody_upDisqList')
+            self.dict_service[url] = self.get_text(driver, 'ctl00_cphBody_upDisqList')
         else:
             print('Имя не определено')
         print('bankrot_fedresurs_disqualificantslist')
@@ -403,98 +395,10 @@ class Service:
         driver.close()
         return True
 
-    def get_data_from_zachestnyibiznes(self, link):
-        result = requests.get(link).text
-        soup = bs(result, 'lxml')
-
-        inn = soup.find(id='inn').text
-
-        pre_ogrn = soup.find(id='ogrn').text
-        ogrn = [x for x in pre_ogrn]
-
-        table = soup.find('table')
-        bosses_header = soup.find(text='Учредители').parent.parent
-        bosses = bosses_header.find('table')
-        bosses_links = bosses.find_all('a')
-        bosses_inn = []
-        for i in bosses_links:
-            if i.get('href').startswith('/fl/'):
-                try:
-                    int(i.text)
-                    bosses_inn.append(i.text)
-                except ValueError:
-                    continue
-
-        print('inn', inn)
-        print('ogrn', ogrn)
-        # print(bosses)
-        print(bosses_inn)
-
-        return(inn, ogrn, bosses_inn)
-
-    def zachestnyibiznes(self):
-        u = 'https://zachestnyibiznes.ru/search?query={}'.format(self.key)
-        # proxi = self.get_proxi()
-        # header = self.user_agent()
-        #
-        # result = requests.get(u, proxies={'http': 'http://'+proxi}, headers=header).text
-        result = requests.get(u).text
-        soup = bs(result, 'lxml')
-        table = soup.find('table')
-        boss_name = table.find(itemprop="founder").text
-        link = 'https://zachestnyibiznes.ru{}'.format(table.find('a').get('href'))
-        print(link)
-        company_name = list(table.find('a').children)[0]
-
-        if '/ul/' in link:
-            self.ul = True
-        else:
-            self.ul = False
-
-        print('Это юл? ', self.ul)
-
-        today = datetime.datetime.now()
-        date_of_registration = dateparser.parse(table.find(itemprop="foundingDate").text)
-        date_result = today - date_of_registration
-
-        address = list(table.find(itemprop="address").children)[2]
-        inn, ogrn, bosses_inn = self.get_data_from_zachestnyibiznes(link)
-
-        print('Дата регистрации: {} дней'.format(date_result.days))
-        list_key = [x for x in self.key]
-        for i in bosses_inn:
-            print(i)
-            i = [x for x in i]
-            self.fiz(boss_name, i)
-
-        if date_result.days < 60:
-            """
-            # days = 30
-            # ogrn = '1197746013563'
-    
-            # if days < 60:
-            """
-            print('меньше 60 дней')
-            if self.ul is True:
-                self.ur_min(list_key, ogrn)
-            else:
-                self.ip_min(list_key, ogrn)
-        else:
-            print('больше 60 дней')
-            if self.ul is True:
-                self.ur_min(list_key, ogrn)
-                self.ur_max(boss_name, list_key)
-
-            else:
-                self.ip_min(list_key, ogrn)
-                self.ip_max(list_key, boss_name)
-
-        return(self.ul, inn, ogrn, address, boss_name, company_name, bosses_inn, self.dict_div)
-        # return True
-
 
 if __name__ == '__main__':
-    service = Service('7704471520')
-
-    service.zachestnyibiznes()
-    print(service.dict_div.keys())
+    # service = Service('7704471520')
+    #
+    # service.zachestnyibiznes()
+    # print(service.dict_div.keys())
+    pass
