@@ -64,6 +64,7 @@ class Service:
 
     def input_key(self, driver, form_id, key):
         username = driver.find_element_by_id(form_id)
+        time.sleep(random.randint(3, 7))
         for i in key:
             time.sleep(.06)
             username.send_keys(i)
@@ -298,7 +299,9 @@ class Service:
         'Единый федеральный реестр сведений о банкротстве',
         'http://bankrot.fedresurs.ru/DebtorsSearch.aspx'
         """
+        print('serv fiz')
         driver = webdriver.Chrome()
+        # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
 
         self.nalog_disqualified_do(driver, boss_name)
         # self.bankrot_fedresurs_debtorssearch(driver, key)
@@ -319,6 +322,7 @@ class Service:
         'Портал Закупок Результаты поиска',
         'http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html'
         """
+        print('serv ip_min')
         driver = webdriver.Chrome()
 
         self.nalog_uwsfind_do(driver, ogrn)
@@ -339,6 +343,7 @@ class Service:
         'Поиск сведений в реестре дисквалифицированных лиц',
         'https://service.nalog.ru/disqualified.do'
         """
+        print('serv ip_max')
         driver = webdriver.Chrome()
 
         self.se_fedresurs(driver, key)
@@ -359,6 +364,7 @@ class Service:
          (311-П, 440-П)',
         ‌'https://service.nalog.ru/bi.do'
         """
+        print('serv ur_min')
         driver = webdriver.Chrome()
 
         self.nalog_uwsfind_do(driver, ogrn)
@@ -384,6 +390,7 @@ class Service:
          по уплате налогов и/или не представляющих налоговую отчетность более года',
         'https://service.nalog.ru/zd.do'
         """
+        print('serv ur_min')
         driver = webdriver.Chrome()
 
         self.nalog_disqualified_do(driver, boss_name)

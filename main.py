@@ -52,7 +52,7 @@ def user_input():
     print('Программа заработала, для выхода нажмите Ctrl + C.')
 
     while var is False:
-        key = input('Введите ключ: ', )
+        key = input('Введите ключ: ', ).strip()
         try:
             int(key)
             checkobj = CheckObj([x for x in key])
@@ -75,8 +75,6 @@ def user_input():
                 return False
             print('Неверные данные.')
             var = False
-
-# document = Document()
 
 
 dict_data = []
@@ -115,13 +113,13 @@ else:
     if checkobj.date_result.days < 60:
 
         print('меньше 60 дней')
-        if ul is True:
+        if ul is True and len(checkobj.ogrn) < 15:
             service.ur_min(list_key, ogrn)
         else:
             service.ip_min(list_key, ogrn)
     else:
         print('больше 60 дней')
-        if ul is True:
+        if ul is True and len(checkobj.ogrn) < 15:
             service.ur_min(list_key, ogrn)
             service.ur_max(checkobj.boss_name, list_key)
 
@@ -131,23 +129,7 @@ else:
 
     dict_data.append(service.dict_service)
 
-#
-#
-#
-#
-# str_ogrn = ''.join(ogrn)
-#
 
-#
-# document.add_heading('{}'.format(company_name), level=1)
-# document.add_heading('ИНН: {}'.format(key), level=2)
-# document.add_heading('ОГРН: {}'.format(str_ogrn), level=2)
-# document.add_heading('{}'.format(boss_name), level=2)
-#
-
-# # filename = '{}.docx'.format(today)
-#
-#
 print('начинаем собирать документ')
 document = Document()
 today = datetime.date.today().strftime('%d.%m.%y')

@@ -6,7 +6,7 @@ import random
 import dateparser
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+# from selenium.common.exceptions import NoSuchElementException
 
 
 class CheckObj:
@@ -92,10 +92,12 @@ class CheckObj:
             username.send_keys(i)
         time.sleep(random.randint(2, 7))
         driver.find_element_by_id('btnSearch').click()
-        try:
-            driver.find_element_by_id('noDataFound')
-            driver.close()
-            return False
-        except NoSuchElementException:
+        time.sleep(random.randint(2, 7))
+
+        txt = driver.find_element_by_id('resultContent').text
+        if txt:
             driver.close()
             return True
+        else:
+            driver.close()
+            return False
