@@ -78,13 +78,10 @@ class Service:
     def get_text(self, driver, id):
         time.sleep(random.randint(2, 7))
         try:
-            # text = driver.find_element_by_id(id).text
             html = driver.find_element_by_id(id).get_attribute('innerHTML')
             return html
         except NoSuchElementException:
             html = driver.find_element_by_class_name(id).get_attribute('innerHTML')
-            # rows = driver.find_elements_by_id(id)
-            # text = [row.text for row in rows]
             return html
 
     def cap(self, driver):

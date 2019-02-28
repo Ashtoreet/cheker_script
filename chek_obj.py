@@ -29,7 +29,7 @@ class CheckObj:
         result = requests.get(link).text
         soup = bs(result, 'lxml')
 
-        self.ogrn = soup.find(id='ogrn').text
+        # self.ogrn = soup.find(id='ogrn').text
         # ogrn = [x for x in pre_ogrn]
 
         # table = soup.find('table')
@@ -45,7 +45,7 @@ class CheckObj:
                 except ValueError:
                     continue
 
-        print('ogrn', self.ogrn)
+        # print('ogrn', self.ogrn)
         print(bosses_inn)
 
         return True
@@ -63,10 +63,10 @@ class CheckObj:
         print(link)
         self.company_name = list(table.find('a').children)[0]
 
-        if '/ul/' in link:
-            self.ul = True
-        else:
-            self.ul = False
+        # if '/ul/' in link:
+        #     self.ul = True
+        # else:
+        #     self.ul = False
 
         print('Это юл? ', self.ul)
 
@@ -81,23 +81,62 @@ class CheckObj:
 
         return True
 
-    def egrul(self):
-        url = 'https://egrul.nalog.ru/index.html'
+    # def egrul(self):
+    #     url = 'https://egrul.nalog.ru/index.html'
+    #
+    #     driver = webdriver.Chrome()
+    #     driver.get(url)
+    #     username = driver.find_element_by_id('query')
+    #     for i in self.key:
+    #         time.sleep(.05)
+    #         username.send_keys(i)
+    #     time.sleep(random.randint(2, 7))
+    #     driver.find_element_by_id('btnSearch').click()
+    #     time.sleep(random.randint(2, 7))
+    #
+    #     txt = driver.find_element_by_id('resultContent').text
+    #     if txt:
+    #         driver.close()
+    #         return True
+    #     else:
+    #         driver.close()
+    #         return False
+
+    def ruprofile(self):
+        url = 'https://www.rusprofile.ru/'
 
         driver = webdriver.Chrome()
         driver.get(url)
-        username = driver.find_element_by_id('query')
+        username = driver.find_element_by_class_name('index-search-input')
         for i in self.key:
             time.sleep(.05)
             username.send_keys(i)
         time.sleep(random.randint(2, 7))
-        driver.find_element_by_id('btnSearch').click()
-        time.sleep(random.randint(2, 7))
+        driver.find_element_by_class_name('search-btn').click()
+        time.sleep(random.randint(4, 9))
 
-        txt = driver.find_element_by_id('resultContent').text
-        if txt:
+        self.ul = driver.find_element_by_tag_name('h1').text.split()[0]
+        if self.ul.startswith('По'):
             driver.close()
-            return True
-        else:
+            return 1
+        elif self.ul.startswith('ООО'):
+            print(self.ul)
+            self.ogrn = driver.find_element_by_id('clip_ogrn').text
             driver.close()
-            return False
+            return 2
+        elif self.ul.startswith('ИП'):
+            print(self.ul)
+            self.ogrn = driver.find_element_by_id('clip_ogrnip').text
+            driver.close()
+            return 3
+
+        # self.company_name = driver.find_element_by_class_name('company-name').text.strip()
+
+        # if txt:
+        #     driver.close()
+        #     return True
+        # else:
+        #     driver.close()
+        #     return False
+        # driver.close()
+        # return True
