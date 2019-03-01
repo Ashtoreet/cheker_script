@@ -79,7 +79,7 @@ def user_input():
 dict_data = []
 key, checkobj, fs = user_input()
 
-checkobj.zachestnyibiznes()
+# checkobj.ruprofile()
 
 if fs is 1 or fs is 3:
     ul = False
@@ -100,7 +100,7 @@ else:
 
     ogrn = [x for x in checkobj.ogrn]
     list_key = [x for x in key]
-    print(checkobj.bosses_inn)
+    # print(checkobj.bosses_inn)
     """
     доработать
     for i in checkobj.bosses_inn:

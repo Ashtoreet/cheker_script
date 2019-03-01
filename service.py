@@ -339,9 +339,9 @@ class Service:
         """
         print('serv ip_max start')
 
-        self.se_fedresurs(driver, key)
+        # self.se_fedresurs(driver, key)
         self.nalog_disqualified_do(driver, boss_name)
-        print('serv ip_max start')
+        print('serv ip_max end')
 
         return True
 
