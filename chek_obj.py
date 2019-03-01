@@ -61,7 +61,7 @@ class CheckObj:
         self.boss_name = table.find(itemprop="founder").text
         link = 'https://zachestnyibiznes.ru{}'.format(table.find('a').get('href'))
         print(link)
-        self.company_name = list(table.find('a').children)[0]
+        # self.company_name = list(table.find('a').children)[0]
 
         # if '/ul/' in link:
         #     self.ul = True
@@ -114,6 +114,8 @@ class CheckObj:
         time.sleep(random.randint(2, 7))
         driver.find_element_by_class_name('search-btn').click()
         time.sleep(random.randint(4, 9))
+
+        self.company_name = driver.find_element_by_class_name('company-name').text.strip()
 
         self.ul = driver.find_element_by_tag_name('h1').text.split()[0]
         if self.ul.startswith('По'):

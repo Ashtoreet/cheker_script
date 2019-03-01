@@ -147,7 +147,6 @@ class Service:
     def nalog_uwsfind_do(self, driver, ogrn):
         """
         https://service.nalog.ru/uwsfind.do
-        доделать строку для физ
         """
         url = self.services[1]
         driver.get(url)

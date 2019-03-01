@@ -147,11 +147,11 @@ filename = '{} - {}.docx'.format(key, today)
 
 if fs is 1 or fs is 3:
     document.add_heading('{}'.format(checkobj.boss_name, level=1))
-    document.add_heading('ИНН: {}'.format(checkobj.key), level=2)
-    filename = '{} - {}.docx'.format(checkobj.key, today)
+    document.add_heading('ИНН: {}'.format(key), level=2)
+    # filename = '{} - {}.docx'.format(checkobj.key, today)
 else:
     document.add_heading('{}'.format(checkobj.company_name), level=1)
-    document.add_heading('ИНН: {}'.format(checkobj.key), level=2)
+    document.add_heading('ИНН: {}'.format(key), level=2)
     document.add_heading('ОГРН: {}'.format(''.join(checkobj.ogrn)), level=2)
     document.add_heading('{}'.format(checkobj.boss_name), level=2)
 
