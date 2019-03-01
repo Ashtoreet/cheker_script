@@ -2,8 +2,10 @@ from service import Service
 from chek_obj import CheckObj
 import datetime
 from docx import Document
+from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup as bs
+
 
 services = (
     'https://fedresurs.ru',
@@ -84,10 +86,13 @@ if fs is 1 or fs is 3:
 else:
     ul = True
 
+driver = webdriver.Chrome()
+# driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
+
 if fs is 1:
     print("Это физик")
     service = Service(key, ul)
-    service.fiz(checkobj.boss_name, key)
+    service.fiz(checkobj.boss_name, key, driver)
     dict_data.append(service.dict_service)
 
 else:
@@ -116,24 +121,24 @@ else:
         print('меньше 60 дней')
         if fs is 2:
             service = Service(key, ul)
-            service.ur_min(list_key, ogrn)
+            service.ur_min(list_key, ogrn, driver)
         else:
             service = Service(key, ul)
-            service.ip_min(list_key, ogrn)
+            service.ip_min(list_key, ogrn, driver)
     else:
         print('больше 60 дней')
         if fs is 2:
             service = Service(key, ul)
-            service.ur_min(list_key, ogrn)
-            service.ur_max(checkobj.boss_name, list_key)
+            service.ur_min(list_key, ogrn, driver)
+            service.ur_max(checkobj.boss_name, list_key, driver)
 
         else:
             service = Service(key, ul)
-            service.ip_min(list_key, ogrn)
-            service.ip_max(list_key, checkobj.boss_name)
+            service.ip_min(list_key, ogrn, driver)
+            service.ip_max(list_key, checkobj.boss_name, driver)
 
     dict_data.append(service.dict_service)
-
+driver.close()
 
 print('начинаем собирать документ')
 document = Document()

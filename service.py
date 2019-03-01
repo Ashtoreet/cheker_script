@@ -288,7 +288,7 @@ class Service:
             print('Имя не определено')
         print('bankrot_fedresurs_disqualificantslist')
 
-    def fiz(self, boss_name, key):
+    def fiz(self, boss_name, key, driver):
         """
         Физ
         'Поиск сведений в реестре дисквалифицированных лиц',
@@ -296,17 +296,15 @@ class Service:
         'Единый федеральный реестр сведений о банкротстве',
         'http://bankrot.fedresurs.ru/DebtorsSearch.aspx'
         """
-        print('serv fiz')
-        driver = webdriver.Chrome()
-        # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
+        print('serv fiz start')
 
         self.nalog_disqualified_do(driver, boss_name)
         # self.bankrot_fedresurs_debtorssearch(driver, key)
+        print('serv fiz end')
 
-        driver.close()
         return True
 
-    def ip_min(self, key, ogrn):
+    def ip_min(self, key, ogrn, driver):
         """
         Ип мин
         Физ +
@@ -319,17 +317,17 @@ class Service:
         'Портал Закупок Результаты поиска',
         'http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html'
         """
-        print('serv ip_min')
-        driver = webdriver.Chrome()
+        print('serv ip_min start')
 
         self.nalog_uwsfind_do(driver, ogrn)
         self.nalog_bi_do(driver, key)
         self.zakupki(driver, key)
 
-        driver.close()
+        print('serv ip_min end')
+
         return True
 
-    def ip_max(self, key, boss_name):
+    def ip_max(self, key, boss_name, driver):
         """
         ИП мах
         Ип мин +
@@ -340,16 +338,15 @@ class Service:
         'Поиск сведений в реестре дисквалифицированных лиц',
         'https://service.nalog.ru/disqualified.do'
         """
-        print('serv ip_max')
-        driver = webdriver.Chrome()
+        print('serv ip_max start')
 
         self.se_fedresurs(driver, key)
         self.nalog_disqualified_do(driver, boss_name)
+        print('serv ip_max start')
 
-        driver.close()
         return True
 
-    def ur_min(self, key, ogrn):
+    def ur_min(self, key, ogrn, driver):
         """
         Юр мин
         'Сведения о юридических лицах и индивидуальных предпринимателях,
@@ -361,17 +358,16 @@ class Service:
          (311-П, 440-П)',
         ‌'https://service.nalog.ru/bi.do'
         """
-        print('serv ur_min')
-        driver = webdriver.Chrome()
+        print('serv ur_min start')
 
         self.nalog_uwsfind_do(driver, ogrn)
         self.zakupki(driver, key)
         self.nalog_bi_do(driver, key)
+        print('serv ur_min end')
 
-        driver.close()
         return True
 
-    def ur_max(self, boss_name, key):
+    def ur_max(self, boss_name, key, driver):
         """
         Юр мах
         Юр мин +
@@ -387,22 +383,13 @@ class Service:
          по уплате налогов и/или не представляющих налоговую отчетность более года',
         'https://service.nalog.ru/zd.do'
         """
-        print('serv ur_min')
-        driver = webdriver.Chrome()
+        print('serv ur_max start')
 
         self.nalog_disqualified_do(driver, boss_name)
         self.nalog_svl_do(driver, key)
         # self.bankrot_fedresurs_debtorssearch(driver, key)
         self.nalog_zd_do(driver, key)
         # self.bankrot_fedresurs_disqualificantslist(driver, boss_name)
+        print('serv ur_max end')
 
-        driver.close()
         return True
-
-
-if __name__ == '__main__':
-    # service = Service('7704471520')
-    #
-    # service.zachestnyibiznes()
-    # print(service.dict_div.keys())
-    pass

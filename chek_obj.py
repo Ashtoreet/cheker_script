@@ -129,14 +129,3 @@ class CheckObj:
             self.ogrn = driver.find_element_by_id('clip_ogrnip').text
             driver.close()
             return 3
-
-        # self.company_name = driver.find_element_by_class_name('company-name').text.strip()
-
-        # if txt:
-        #     driver.close()
-        #     return True
-        # else:
-        #     driver.close()
-        #     return False
-        # driver.close()
-        # return True
