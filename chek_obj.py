@@ -12,13 +12,14 @@ from selenium import webdriver
 class CheckObj:
 
     def __init__(
-            self, key, dict_div={}, ul=None, date_result=None, ogrn=None,
+            self, key, inn=None, dict_div={}, ul=None, date_result=None, ogrn=None,
             address=None, boss_name=None, company_name=None, bosses_inn=[]
     ):
         self.key = key
         self.dict_div = dict_div
         self.ul = ul
         self.date_result = date_result
+        self.inn = inn
         self.ogrn = ogrn
         self.address = address
         self.boss_name = boss_name
@@ -138,6 +139,7 @@ class CheckObj:
 
             print(self.ul)
             self.ogrn = driver.find_element_by_id('clip_ogrn').text
+            self.inn = driver.find_element_by_id('clip_inn').text
             driver.close()
 
             return 2
@@ -153,6 +155,7 @@ class CheckObj:
 
             print(self.ul)
             self.ogrn = driver.find_element_by_id('clip_ogrnip').text
+            self.inn = driver.find_element_by_id('clip_inn').text
             driver.close()
 
             return 3

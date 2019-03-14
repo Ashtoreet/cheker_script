@@ -57,15 +57,19 @@ def user_input():
         key = input('Введите ключ: ', ).strip()
         try:
             int(key)
-            checkobj = CheckObj([x for x in key])
-            fs = checkobj.ruprofile()
-            if len(key) is 10 or len(key) is 13:
-                print('ul = True')
-                return(key, checkobj, fs)
-            elif len(key) is 12 or len(key) is 15:
 
-                print('ul = False')
-                return(key, checkobj, fs)
+            if len(key) is 10 or len(key) is 13:
+                checkobj = CheckObj([x for x in key])
+                fs = checkobj.ruprofile()
+                print('ul = True')
+                return(checkobj, fs)
+
+            elif len(key) is 12 or len(key) is 15:
+                checkobj = CheckObj([x for x in key])
+
+                fs = checkobj.ruprofile()
+                return (checkobj, fs)
+
             else:
                 print('Неверные данные.')
                 var = False
@@ -77,7 +81,7 @@ def user_input():
 
 
 dict_data = []
-key, checkobj, fs = user_input()
+checkobj, fs = user_input()
 
 # checkobj.ruprofile()
 
@@ -91,15 +95,14 @@ driver = webdriver.Chrome()
 
 if fs is 1:
     print("Это физик")
-    service = Service(key, ul)
-    service.fiz(checkobj.boss_name, key, driver)
+    service = Service(checkobj.inn, checkobj.ogrn, ul)
+    service.fiz(checkobj.boss_name, driver)
     dict_data.append(service.dict_service)
-
 else:
     print('Это не физик')
 
-    ogrn = [x for x in checkobj.ogrn]
-    list_key = [x for x in key]
+    # ogrn = [x for x in checkobj.ogrn]
+    # list_key = [x for x in checkobj.key]
     # print(checkobj.bosses_inn)
     """
     доработать
@@ -120,22 +123,22 @@ else:
 
         print('меньше 60 дней')
         if fs is 2:
-            service = Service(key, ul)
-            service.ur_min(list_key, ogrn, driver)
+            service = Service(checkobj.inn, checkobj.ogrn, ul)
+            service.ur_min(driver)
         else:
-            service = Service(key, ul)
-            service.ip_min(list_key, ogrn, driver)
+            service = Service(checkobj.inn, checkobj.ogrn, ul)
+            service.ip_min(driver)
     else:
         print('больше 60 дней')
         if fs is 2:
-            service = Service(key, ul)
-            service.ur_min(list_key, ogrn, driver)
-            service.ur_max(checkobj.boss_name, list_key, driver)
+            service = Service(checkobj.inn, checkobj.ogrn, ul)
+            service.ur_min(driver)
+            service.ur_max(checkobj.boss_name, driver)
 
         else:
-            service = Service(key, ul)
-            service.ip_min(list_key, ogrn, driver)
-            service.ip_max(list_key, checkobj.boss_name, driver)
+            service = Service(checkobj.inn, checkobj.ogrn, ul)
+            service.ip_min(driver)
+            service.ip_max(checkobj.boss_name, driver)
 
     dict_data.append(service.dict_service)
 driver.close()
@@ -143,15 +146,15 @@ driver.close()
 print('начинаем собирать документ')
 document = Document()
 today = datetime.date.today().strftime('%d.%m.%y')
-filename = '{} - {}.docx'.format(key, today)
+filename = '{} - {}.docx'.format(checkobj.key, today)
 
 if fs is 1 or fs is 3:
     document.add_heading('{}'.format(checkobj.boss_name, level=1))
-    document.add_heading('ИНН: {}'.format(key), level=2)
+    document.add_heading('ИНН: {}'.format(checkobj.key), level=2)
     # filename = '{} - {}.docx'.format(checkobj.key, today)
 else:
     document.add_heading('{}'.format(checkobj.company_name), level=1)
-    document.add_heading('ИНН: {}'.format(key), level=2)
+    document.add_heading('ИНН: {}'.format(checkobj.key), level=2)
     document.add_heading('ОГРН: {}'.format(''.join(checkobj.ogrn)), level=2)
     document.add_heading('{}'.format(checkobj.boss_name), level=2)
 

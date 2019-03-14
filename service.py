@@ -39,8 +39,9 @@ class Service:
         'Единый федеральный реестр сведений о банкротстве. Дисквалифицированные лица.',
     )
 
-    def __init__(self, key, ul, dict_service={}):
-        self.key = key
+    def __init__(self, inn, ogrn, ul, dict_service={}):
+        self.inn = [x for x in inn]
+        self.ogrn = [x for x in ogrn]
         self.dict_service = dict_service
         self.ul = ul
 
@@ -131,20 +132,20 @@ class Service:
         header = {'User-Agent':str(UserAgent().chrome)}
         return header
 
-    def se_fedresurs(self, driver, key):
+    def se_fedresurs(self, driver):
         """
         http://se.fedresurs.ru
         """
         url = self.services[0]
         driver.get(url)
-        self.input_key(driver, 'ctl00_tbCompanySearch', key)
+        self.input_key(driver, 'ctl00_tbCompanySearch', self.inn)
         self.button(driver, 'ctl00_Button2')
         result = driver.find_element_by_id('ctl00_MainContent_upnCompanyList')
         result.find_element_by_class_name('title').click()
         self.dict_service[url] = self.get_text(driver, 'columntext')
         print('se_fedresurs')
 
-    def nalog_uwsfind_do(self, driver, ogrn):
+    def nalog_uwsfind_do(self, driver):
         """
         https://service.nalog.ru/uwsfind.do
         """
@@ -153,7 +154,7 @@ class Service:
 
         if self.ul is True:
 
-            username = self.input_key(driver, 'ogrnUl', ogrn)
+            username = self.input_key(driver, 'ogrnUl', self.ogrn)
             self.cap_loop(username, driver, 'btnSearch')
             table = self.get_text(driver, 'tableResultData')
             if table:
@@ -162,7 +163,7 @@ class Service:
                 self.dict_service[url] = self.get_text(driver, 'pnlResult')
         else:
             self.radio_click(driver, 'unirad_1')
-            username = self.input_key(driver, 'ogrnIp', ogrn)
+            username = self.input_key(driver, 'ogrnIp', self.ogrn)
             self.cap_loop(username, driver, 'btnSearch')
 
             self.dict_service[url] = self.get_text(driver, 'pnlResult')
@@ -177,7 +178,7 @@ class Service:
         url = self.services[2]
         driver.get(url)
         if self.ul is True:
-            username = self.input_key(driver, 'orgInn', self.key)
+            username = self.input_key(driver, 'orgInn', self.inn)
             self.cap_loop(username, driver, 'float-right')
             self.dict_service[url] = self.get_text(driver, 'resultPanel')
         else:
@@ -200,13 +201,13 @@ class Service:
                 print('Имя не определено')
         print('nalog_disqualified_do')
 
-    def zakupki(self, driver, key):
+    def zakupki(self, driver):
         """
         http://zakupki.gov.ru/epz/dishonestsupplier/quicksearch/search.html
         """
         url = self.services[3]
         driver.get(url)
-        username = self.input_key(driver, 'searchString', key)
+        username = self.input_key(driver, 'searchString', self.inn)
         username.submit()
         time.sleep(random.randint(2, 7))
         try:
@@ -215,13 +216,13 @@ class Service:
             print('Поиск не дал результатов.')
         print('zakupki')
 
-    def nalog_svl_do(self, driver, key):
+    def nalog_svl_do(self, driver):
         """
         https://service.nalog.ru/svl.do
         """
         url = self.services[4]
         driver.get(url)
-        username = self.input_key(driver, 'svlform_inn', key)
+        username = self.input_key(driver, 'svlform_inn', self.key)
         self.cap_loop(username, driver, 'btn-ok')
         try:
             self.dict_service[url] = self.get_text(driver, 'container')
@@ -229,46 +230,47 @@ class Service:
             self.dict_service[url] = self.get_text(driver, 'panel')
         print('nalog_svl_do')
 
-    def bankrot_fedresurs_debtorssearch(self, driver, key):
+    def bankrot_fedresurs_debtorssearch(self, driver):
         """
         http://bankrot.fedresurs.ru/DebtorsSearch.aspx
         """
         url = self.services[5]
         driver.get(url)
         if self.ul is True:
-            self.input_key(driver, 'ctl00_cphBody_OrganizationCode1_CodeTextBox', key)
+            self.input_key(driver, 'ctl00_cphBody_OrganizationCode1_CodeTextBox', self.inn)
             self.button(driver, 'ctl00_cphBody_btnSearch')
             self.dict_service[url] = self.get_text(driver, 'ctl00_cphBody_upList')
         else:
             time.sleep(random.randint(2, 7))
             self.radio_click(driver, 'ctl00_cphBody_rblDebtorType_1')
             time.sleep(random.randint(2, 7))
-            self.input_key(driver, 'ctl00_cphBody_PersonCode1_CodeTextBox', key)
+            self.input_key(driver, 'ctl00_cphBody_PersonCode1_CodeTextBox', self.inn)
             self.button(driver, 'ctl00_cphBody_btnSearch')
             self.dict_service[url] = self.get_text(driver, 'ctl00_cphBody_upList')
         print('bankrot_fedresurs_debtorssearch')
 
-    def nalog_zd_do(self, driver, key):
+    def nalog_zd_do(self, driver):
         """
         https://service.nalog.ru/zd.do
         """
         url = self.services[6]
         driver.get(url)
-        username = self.input_key(driver, 'inn', key)
+        username = self.input_key(driver, 'inn', self.inn)
         self.cap_loop(username, driver, 'btn_send')
         self.dict_service[url] = self.get_text(driver, 'pnlResults')
         print('nalog_zd_do')
 
-    def nalog_bi_do(self, driver, key):
+    def nalog_bi_do(self, driver):
         """
         https://service.nalog.ru/bi.do
         """
         url = self.services[7]
         driver.get(url)
         self.radio_click(driver, 'unirad_0')
-        username = self.input_key(driver, 'innPRS', key)
+        username = self.input_key(driver, 'innPRS', self.inn)
         self.bik(driver, 'bikPRS')
-        self.cap_loop(username, driver, 'btnSearch')
+        # self.cap_loop(username, driver, 'btnSearch')
+        self.button(driver, 'btnSearch')
         self.dict_service[url] = self.get_text(driver, 'pnlResultData')
         print('nalog_bi_do')
 
@@ -287,7 +289,7 @@ class Service:
             print('Имя не определено')
         print('bankrot_fedresurs_disqualificantslist')
 
-    def fiz(self, boss_name, key, driver):
+    def fiz(self, boss_name, driver):
         """
         Физ
         'Поиск сведений в реестре дисквалифицированных лиц',
@@ -298,12 +300,12 @@ class Service:
         print('serv fiz start')
 
         self.nalog_disqualified_do(driver, boss_name)
-        # self.bankrot_fedresurs_debtorssearch(driver, key)
+        # self.bankrot_fedresurs_debtorssearch(driver, self.inn)
         print('serv fiz end')
 
         return True
 
-    def ip_min(self, key, ogrn, driver):
+    def ip_min(self, driver):
         """
         Ип мин
         Физ +
@@ -318,15 +320,15 @@ class Service:
         """
         print('serv ip_min start')
 
-        self.nalog_uwsfind_do(driver, ogrn)
-        self.nalog_bi_do(driver, key)
-        self.zakupki(driver, key)
+        self.nalog_uwsfind_do(driver)
+        self.nalog_bi_do(driver)
+        self.zakupki(driver)
 
         print('serv ip_min end')
 
         return True
 
-    def ip_max(self, key, boss_name, driver):
+    def ip_max(self, boss_name, driver):
         """
         ИП мах
         Ип мин +
@@ -339,13 +341,13 @@ class Service:
         """
         print('serv ip_max start')
 
-        # self.se_fedresurs(driver, key)
+        # self.se_fedresurs(driver, self.inn)
         self.nalog_disqualified_do(driver, boss_name)
         print('serv ip_max end')
 
         return True
 
-    def ur_min(self, key, ogrn, driver):
+    def ur_min(self, driver):
         """
         Юр мин
         'Сведения о юридических лицах и индивидуальных предпринимателях,
@@ -359,14 +361,14 @@ class Service:
         """
         print('serv ur_min start')
 
-        self.nalog_uwsfind_do(driver, ogrn)
-        self.zakupki(driver, key)
-        self.nalog_bi_do(driver, key)
+        self.nalog_uwsfind_do(driver)
+        self.zakupki(driver)
+        self.nalog_bi_do(driver)
         print('serv ur_min end')
 
         return True
 
-    def ur_max(self, boss_name, key, driver):
+    def ur_max(self, boss_name, driver):
         """
         Юр мах
         Юр мин +
@@ -385,9 +387,9 @@ class Service:
         print('serv ur_max start')
 
         self.nalog_disqualified_do(driver, boss_name)
-        self.nalog_svl_do(driver, key)
-        # self.bankrot_fedresurs_debtorssearch(driver, key)
-        self.nalog_zd_do(driver, key)
+        self.nalog_svl_do(driver)
+        # self.bankrot_fedresurs_debtorssearch(driver)
+        self.nalog_zd_do(driver)
         # self.bankrot_fedresurs_disqualificantslist(driver, boss_name)
         print('serv ur_max end')
 
