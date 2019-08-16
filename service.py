@@ -268,13 +268,28 @@ class Service:
         """
         url = self.services[7]
         driver.get(url)
-        self.radio_click(driver, 'unirad_0')
-        username = self.input_key(driver, 'innPRS', self.inn)
-        self.bik(driver, 'bikPRS')
-        # self.cap_loop(username, driver, 'btnSearch')
-        self.button(driver, 'btnSearch')
-        self.dict_service[url] = self.get_text(driver, 'pnlResultData')
-        print('nalog_bi_do')
+
+        try:
+            username = driver.find_element_by_class_name('dialog')
+            self.cap_loop(username, driver, 'btnOk')
+
+            self.radio_click(driver, 'unirad_0')
+            username = self.input_key(driver, 'innPRS', self.inn)
+            self.bik(driver, 'bikPRS')
+            # self.cap_loop(username, driver, 'btnSearch')
+            self.button(driver, 'btnSearch')
+            self.dict_service[url] = self.get_text(driver, 'pnlResultData')
+            print('nalog_bi_do')
+        except NoSuchElementException:
+            time.sleep(random.randint(2, 7))
+
+            self.radio_click(driver, 'unirad_0')
+            username = self.input_key(driver, 'innPRS', self.inn)
+            self.bik(driver, 'bikPRS')
+            # self.cap_loop(username, driver, 'btnSearch')
+            self.button(driver, 'btnSearch')
+            self.dict_service[url] = self.get_text(driver, 'pnlResultData')
+            print('nalog_bi_do')
 
     def bankrot_fedresurs_disqualificantslist(self, driver, boss_name):
         """
