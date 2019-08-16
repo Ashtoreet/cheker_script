@@ -6,7 +6,7 @@ import random
 import dateparser
 
 from selenium import webdriver
-# from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
 
 
 class CheckObj:
@@ -106,56 +106,72 @@ class CheckObj:
     def ruprofile(self):
         url = 'https://www.rusprofile.ru/'
         today = datetime.datetime.now()
-        driver = webdriver.Chrome()
+        driver = webdriver.Firefox()
+        # driver = webdriver.Chrome()
         # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
-
-        driver.get(url)
-        username = driver.find_element_by_class_name('index-search-input')
-        for i in self.key:
-            time.sleep(.05)
-            username.send_keys(i)
         time.sleep(random.randint(2, 7))
-        driver.find_element_by_class_name('search-btn').click()
-        time.sleep(random.randint(4, 9))
-
-        self.company_name = driver.find_element_by_class_name('company-name').text.strip()
-
-        self.ul = driver.find_element_by_tag_name('h1').text.split()[0]
-        if self.ul.startswith('По'):
-
+        driver.get(url)
+        time.sleep(random.randint(2, 7))
+        try:
+            robot = driver.find_element_by_id('checkform')
+            print(driver.find_element_by_tag_name('p').text)
+            print('ruprofile чек робот')
             driver.close()
-            return 1
+            return 0
+        except NoSuchElementException:
+            username = driver.find_element_by_class_name('index-search-input')
 
-        elif self.ul.startswith('ООО'):
+            for i in self.key:
+                time.sleep(.05)
+                username.send_keys(i)
+            time.sleep(random.randint(2, 7))
+            # driver.find_element_by_class_name('search-btn').click()
+            # time.sleep(random.randint(4, 9))
+            try:
+                drop_list = driver.find_element_by_class_name('search-drop__item')
+                drop_list.click()
+            except NoSuchElementException:
+                driver.find_element_by_class_name('search-btn').click()
+            time.sleep(random.randint(5, 12))
 
-            req_all = driver.find_elements_by_class_name('company-info__text')
-            self.boss_name = req_all[-2].text
+            self.company_name = driver.find_element_by_class_name('company-name').text.strip()
 
-            date_of_registration = dateparser.parse(req_all[4].text)
-            self.date_result = today - date_of_registration
-            print('Дата регистрации: {} дней'.format(self.date_result.days))
+            self.ul = driver.find_element_by_tag_name('h1').text.split()[0]
+            if self.ul.startswith('По'):
 
-            self.address = req_all[7].text
+                driver.close()
+                return 1
 
-            print(self.ul)
-            self.ogrn = driver.find_element_by_id('clip_ogrn').text
-            self.inn = driver.find_element_by_id('clip_inn').text
-            driver.close()
+            elif self.ul.startswith('ООО'):
 
-            return 2
+                req_all = driver.find_elements_by_class_name('company-info__text')
+                self.boss_name = req_all[-2].text
 
-        elif self.ul.startswith('ИП'):
+                date_of_registration = dateparser.parse(req_all[4].text)
+                self.date_result = today - date_of_registration
+                print('Дата регистрации: {} дней'.format(self.date_result.days))
 
-            req_all = driver.find_elements_by_class_name('company-info__text')
-            self.boss_name = driver.find_element_by_class_name('company-name').text.strip()
+                self.address = req_all[7].text
 
-            date_of_registration = dateparser.parse(req_all[-2].text)
-            self.date_result = today - date_of_registration
-            print('Дата регистрации: {} дней'.format(self.date_result.days))
+                print(self.ul)
+                self.ogrn = driver.find_element_by_id('clip_ogrn').text
+                self.inn = driver.find_element_by_id('clip_inn').text
+                driver.close()
 
-            print(self.ul)
-            self.ogrn = driver.find_element_by_id('clip_ogrnip').text
-            self.inn = driver.find_element_by_id('clip_inn').text
-            driver.close()
+                return 2
 
-            return 3
+            elif self.ul.startswith('ИП'):
+
+                req_all = driver.find_elements_by_class_name('company-info__text')
+                self.boss_name = driver.find_element_by_class_name('company-name').text.strip()
+
+                date_of_registration = dateparser.parse(req_all[-2].text)
+                self.date_result = today - date_of_registration
+                print('Дата регистрации: {} дней'.format(self.date_result.days))
+
+                print(self.ul)
+                self.ogrn = driver.find_element_by_id('clip_ogrnip').text
+                self.inn = driver.find_element_by_id('clip_inn').text
+                driver.close()
+
+                return 3

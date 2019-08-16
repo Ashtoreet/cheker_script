@@ -5,6 +5,7 @@ from docx import Document
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from bs4 import BeautifulSoup as bs
+import sys
 
 
 services = (
@@ -87,6 +88,8 @@ checkobj, fs = user_input()
 
 if fs is 1 or fs is 3:
     ul = False
+elif fs is 0:
+    sys.exit()
 else:
     ul = True
 
@@ -146,25 +149,28 @@ driver.close()
 print('начинаем собирать документ')
 document = Document()
 today = datetime.date.today().strftime('%d.%m.%y')
-filename = '{} - {}.docx'.format(checkobj.key, today)
+key_inn = ''.join(checkobj.key)
+filename = '{} - {}.docx'.format(key_inn, today)
+
 
 if fs is 1 or fs is 3:
     document.add_heading('{}'.format(checkobj.boss_name, level=1))
-    document.add_heading('ИНН: {}'.format(checkobj.key), level=2)
+    document.add_heading('ИНН: {}'.format(key_inn), level=2)
     # filename = '{} - {}.docx'.format(checkobj.key, today)
 else:
     document.add_heading('{}'.format(checkobj.company_name), level=1)
-    document.add_heading('ИНН: {}'.format(checkobj.key), level=2)
+    document.add_heading('ИНН: {}'.format(key_inn), level=2)
     document.add_heading('ОГРН: {}'.format(''.join(checkobj.ogrn)), level=2)
     document.add_heading('{}'.format(checkobj.boss_name), level=2)
 
 for data in dict_data:
-    index_header = 0
+    # index_header = 1
     for k, v in service.dict_service.items():
         soup = bs(v, 'lxml')
-
-        head = headers[index_header]
-        index_header += 1
+        # headers[services.index('https://fedresurs.ru')]
+        head = headers[services.index(k)]
+        # head = headers[index_header]
+        # index_header += 1
 
         document.add_heading(head, level=2)
         try:
