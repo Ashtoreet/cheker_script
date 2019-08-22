@@ -93,7 +93,8 @@ elif fs is 0:
 else:
     ul = True
 
-driver = webdriver.Chrome()
+# driver = webdriver.Chrome()
+driver = webdriver.Firefox()
 # driver = webdriver.Firefox(executable_path='C:\\Python\geckodriver.exe')
 
 if fs is 1:

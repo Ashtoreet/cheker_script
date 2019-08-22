@@ -104,10 +104,14 @@ class Service:
             else:
                 username.submit()
             try:
-                er = driver.find_element_by_id('errors_captcha').text
+                er = driver.find_element_by_class_name('err-panel').text
                 print(er)
             except NoSuchElementException:
-                er = False
+                try:
+                    er = driver.find_element_by_id('errors_captcha').text
+                    print(er)
+                except NoSuchElementException:
+                    er = False
         print('Цифры с картинки введены верно')
 
     def get_proxi(self):
@@ -179,6 +183,9 @@ class Service:
         """
         url = self.services[2]
         driver.get(url)
+        driver.switch_to.frame(driver.find_element_by_tag_name("iframe"))
+        self.button(driver, 'btnClose')
+        driver.switch_to.default_content()
         if self.ul is True:
             username = self.input_key(driver, 'orgInn', self.inn)
             self.cap_loop(username, driver, 'float-right')
@@ -266,28 +273,27 @@ class Service:
         """
         https://service.nalog.ru/bi.do
         """
+
         url = self.services[7]
         driver.get(url)
+        self.radio_click(driver, 'unirad_0')
+        username = self.input_key(driver, 'innPRS', self.inn)
+        self.bik(driver, 'bikPRS')
+        self.button(driver, 'btnSearch')
 
         try:
-            username = driver.find_element_by_class_name('dialog')
-            self.cap_loop(username, driver, 'btnOk')
+            if driver.find_element_by_tag_name('iFrame'):
+                print('диалог')
+                driver.switch_to.frame(driver.find_element_by_tag_name("iframe"))
+                capt = driver.find_element_by_id('dialogContent')
+                self.cap_loop(capt, driver, 'btnOk')
+                driver.switch_to.default_content()
 
-            self.radio_click(driver, 'unirad_0')
-            username = self.input_key(driver, 'innPRS', self.inn)
-            self.bik(driver, 'bikPRS')
-            # self.cap_loop(username, driver, 'btnSearch')
-            self.button(driver, 'btnSearch')
-            self.dict_service[url] = self.get_text(driver, 'pnlResultData')
-            print('nalog_bi_do')
+                self.dict_service[url] = self.get_text(driver, 'pnlResultData')
+                print('nalog_bi_do')
         except NoSuchElementException:
-            time.sleep(random.randint(2, 7))
+            print('нет диалога')
 
-            self.radio_click(driver, 'unirad_0')
-            username = self.input_key(driver, 'innPRS', self.inn)
-            self.bik(driver, 'bikPRS')
-            # self.cap_loop(username, driver, 'btnSearch')
-            self.button(driver, 'btnSearch')
             self.dict_service[url] = self.get_text(driver, 'pnlResultData')
             print('nalog_bi_do')
 
